@@ -1,0 +1,22 @@
+Base: "centos:7"
+Working directory: 
+  1: "/MIDAS"
+Setup:
+  6: "yum install -y python python3 gcc"
+  7: "yum install -y curl"
+  8: "yum install -y wget"
+
+Contents:
+  4: "sample-input.midas.json"
+  5: "sample-input.midas.json:/MIDAS/MIDAS/sample-input.midas.json"
+
+Environmental variables:
+  2:
+    c1: test
+    c2: test2
+  3: 
+    d1: sample1
+    d2: sample2
+
+Default command: echo 'Hello world'
+

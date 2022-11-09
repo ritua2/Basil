@@ -1,0 +1,10 @@
+Base: "alpine:latest"
+
+Working directory: 
+  1: "/MIDAS"
+
+Setup:
+  6: "apk add --no-cache bash"
+
+Default command: echo 'Hello world'
+
