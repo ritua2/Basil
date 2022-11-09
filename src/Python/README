@@ -1,6 +1,7 @@
-# This code is refactored from the BOINC@TACC project.
+# This code is refactored from the BOINC@TACC project.  BOINC@TACC application uses Midas for generating Docker images.
 
 # Midas: Automated Docker Image Builder
+
 
 -------
 
