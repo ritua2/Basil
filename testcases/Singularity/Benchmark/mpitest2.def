@@ -1,0 +1,55 @@
+Bootstrap: docker
+From: ubuntu:latest
+
+
+###%setup
+###    # Copy to root with name folder-name "code"
+###    cp -R /work/vrv207/containers/jan/singularity-ritu/code ${SINGULARITY_ROOTFS}
+### %post
+###    echo "Here is a listing at the root /"
+###    ls /
+###    echo "Here is the content of /code"
+###    ls -1 /code
+
+%files
+###    /work/vrv207/containers/jan/singularity-ritu/mpitest.c /opt/.
+###    osu-micro-benchmarks-5.8.tgz /tmp
+ mpitest.c /opt
+ osu-micro-benchmarks-5.8.tgz /tmp
+
+%environment
+    export OMPI_DIR=/opt/ompi
+    export SINGULARITY_OMPI_DIR=$OMPI_DIR
+    export SINGULARITYENV_APPEND_PATH=$OMPI_DIR/bin
+    export SINGULAIRTYENV_APPEND_LD_LIBRARY_PATH=$OMPI_DIR/lib
+
+%post
+    echo "Installing required packages..."
+    apt-get update && apt-get install -y wget git bash gcc-9 gfortran g++ make file
+
+    echo "Installing Open MPI"
+    export OMPI_DIR=/opt/ompi
+    export OMPI_VERSION=4.1.0
+    export OMPI_URL="https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VERSION.tar.bz2"
+    mkdir -p /tmp/ompi
+    mkdir -p /opt
+    
+
+    # Download
+    cd /tmp/ompi && wget -O openmpi-$OMPI_VERSION.tar.bz2 $OMPI_URL && tar -xjf openmpi-$OMPI_VERSION.tar.bz2
+    # Compile and install
+    cd /tmp/ompi/openmpi-$OMPI_VERSION && ./configure --prefix=$OMPI_DIR && make install
+    # Set env variables so we can compile our application
+    export PATH=$OMPI_DIR/bin:$PATH
+    export LD_LIBRARY_PATH=$OMPI_DIR/lib:$LD_LIBRARY_PATH
+    export MANPATH=$OMPI_DIR/share/man:$MANPATH
+    
+    echo $(mpirun --version)
+    echo "Compiling the MPI application..."
+    cd /opt && mpicc -o mpitest mpitest.c
+
+    echo "Installing  osu-micro-benchmarks-5.8 "
+    cd /tmp
+    tar xvfz osu-micro-benchmarks-5.8.tgz
+    cd osu-micro-benchmarks-5.8
+    ./configure CC=mpicc CFLAGS=-I$(pwd)util --prefix=/opt/osu  && make &&make install
