@@ -1,2 +1,62 @@
 
 OpenMPI + GCC + OSU benchmarks
+
+Took the steps below to build the image with root permissions and then run the OSU benchmark as a regular user. Even though the benchmarks are provided by the OSU MVAPICH2 team they should work with OpenMPI as well. You can always swap out the OSU benchmarks with any other benchmark of your choice in the definition file.
+
+Below are the steps for the build process:
+Sudo as root
+Load the Singularity module (the OpenMPI module should not be required but it was already loaded in my environment) - we are using singulariy/3.4.1.
+Build the Singularity image file using the Singularity definition file in this directory.
+
+$ singularity build openmpi-gcc-osu.sif mpitest2.def
+        
+        When the command above completes successfully (it can take about 15-20 minutes), you should see something as follows:
+        make[2]: Leaving directory '/tmp/osu-micro-benchmarks-5.8'
+        make[1]: Leaving directory '/tmp/osu-micro-benchmarks-5.8'
+        INFO:    Adding environment to container
+        INFO:    Creating SIF file...
+        INFO:    Build complete: openmpi-gcc-osu.sif
+Change ownership of the image file from root to a regular user account
+Exit as root and ensure that the regular user account has appropriate rwx permissions on the *.sif file
+Request Slurm for interactive access to a node 
+
+$ srun -p compute1 -n 2 -t 02:00:00 --pty bash
+
+Load the Singularity and OpenMPI modules on the compute node if they are not already loaded. I had the following modules loaded in my environment and depending upon how Singularity and OpenMPI is built on your system, you may see a different list of modules:
+$ ml
+
+Currently Loaded Modules:
+  1) squashfs/current   2) singularity/3.4.1   3) mpfr/3.1.6   4) isl/0.18   5) gmp/6.1.0   6) mpc/1.0.3   7) gcc/9.2.0   8) openmpi/4.1.0-gcc-9.2.0
+
+Run the OSU benchmark using the mpirun command as shown below
+
+$ mpirun -n $SLURM_NTASKS singularity run openmpi-gcc-osu.sif /opt/osu/libexec/osu-micro-benchmarks/mpi/one-sided/osu_get_bw
+
+# OSU MPI_Get Bandwidth Test v5.8
+# Window creation: MPI_Win_allocate
+# Synchronization: MPI_Win_flush
+# Size      Bandwidth (MB/s)
+1                      39.01
+2                      77.98
+4                     168.93
+8                     346.10
+16                    723.39
+32                   1441.90
+64                   2888.25
+128                  5303.67
+256                 10553.17
+512                 16325.39
+1024                26311.65
+2048                26847.30
+4096                30478.67
+8192                31628.45
+16384               17292.76
+32768               12852.49
+65536               12887.50
+131072               9345.85
+262144               6699.31
+524288               5981.76
+1048576              5970.22
+2097152              5926.63
+4194304              5952.98
+
