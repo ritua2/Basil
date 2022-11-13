@@ -4,3 +4,4 @@ Currently, the follopwing materials are included:
 1. Intro_to_Docker_DockerCompose_and_Singularity_Nov_2022.pdf: Slides on "introducton to containerization" - with Docker, Docker Compose, and Singularity
 2. Docker_handson.pdf: Additional hands-on exercises for Docker
 3. democontainer.zip: Code sample for Docker Compose hands-on session
+4. Express_Linux_Tutorial.pdf: a tutorial on basic Linux commands 
