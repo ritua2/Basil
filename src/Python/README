@@ -1,4 +1,6 @@
-# This code is refactored from the BOINC@TACC project.  BOINC@TACC application uses Midas for generating Docker images.
+# This code is refactored from the BOINC@TACC project.  BOINC@TACC application uses Midas for generating Docker images. GNU Lesser General Public License is applicable on this code.
+
+
 
 # Midas: Automated Docker Image Builder
 
