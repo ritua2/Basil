@@ -1,5 +1,5 @@
-1. Clean the Midas code and other code in the private repo and add in this repo after testing
-2. Create images for the selected test cases, do vulnerbailty testing, and sign with DCT
-3. Publish the ready-to-use images in public registries so that the images can be pulled and used directly without requiring root permissions and going through the entire build process from scratch.
+1. Clean the Midas code and other code in the private repo and add in this repo after testing: December 03, 20222
+2. Create images for the selected test cases, do vulnerbailty testing, and sign with DCT: December 24, 2022
+3. Publish the ready-to-use images in public registries so that the images can be pulled and used directly without requiring root permissions and going through the entire build process from scratch: January 2023
 4. Workshop planning
-5. Launch the basic verion of Basil online and complete the first iteration of the web portal.
+5. Launch the basic verion of Basil online and complete the first iteration of the web portal: January 2023
