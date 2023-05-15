@@ -1,3 +1,5 @@
+# This folder contains the test cases related to the Basil project. It also contians some test cases that were actually programming exercices related to optimizing Docker images and creating a docker image using Jupyter, Pycharm IDE + Anaconda.
+
 # Docker-Exercise
 Programming Exercises
 
