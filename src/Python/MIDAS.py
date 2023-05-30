@@ -10,6 +10,8 @@ import getpass
 import os
 import re
 import sys
+import subprocess
+import fileinput
 
 import color_print
 import parser as MIDAS_parser
@@ -28,6 +30,9 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+# base image
+base_images = ["ubuntu", "debian", "node", "postgres", "nginx", "python"]
+
 parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("--ignore-copy-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore COPY warnings, 'yes'/'y'/'Y'/'1' for True")
@@ -42,6 +47,9 @@ parser.add_argument("--timeout", type=int, nargs='?', const=True, default=60, he
 
 parser.add_argument("--push", type=str2bool, nargs='?', const=True, default=False, help="Pushes to dockerhub, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("-u", "--username", type=str, nargs='?', const=True, default=False, help="Dockerhub username, will prompt the user if not set and pushing")
+
+# base image
+parser.add_argument("-b", "--base-image", type=str, choices=base_images, help="Base image to be used")
 
 args = parser.parse_args()
 
@@ -58,6 +66,31 @@ docker_instructions = MIDAS_parser.order_inputs(provided_data)
 if docker_instructions[1]:
     sys.exit(docker_instructions[0])
 
+# Prompt user for base image
+if not args.base_image:
+    print("Available set of base images for MIDAS: ")
+    for index, image in enumerate(base_images, start=1):
+        print(f"{index}. {image}")
+    selection = input("Please select the base image by entering its number: ")
+
+# Validate selection
+    if selection.isdigit() and 1 <= int(selection) <= len(base_images):
+        args.base_image = base_images[int(selection) - 1]
+
+        # SED Command LINUX ONLY
+        # command = f"sed -i 's/^FROM.*/FROM {args.base_image}/' dummy.yml"
+        # subprocess.run(command, shell=True, check=True)
+
+        # Replace the FROM line in the YAML file WINDOWS ONLY
+        with fileinput.FileInput("midas.yml", inplace=True) as file:
+            for line in file:
+                if line.startswith("Base:"):
+                    print(f"Base: \"{args.base_image}\"")
+                else:
+                    print(line, end="")
+
+    else:
+        sys.exit("Invalid selection. Exiting...")
 
 docker_instructions = docker_instructions[0]
 
@@ -94,11 +127,12 @@ if not args.ignore_warnings:
                 color_print.color_print("Error: No '"+midas_translator[checking_type]+"' provided, strict parsing", "RED")
                 sys.exit()
 
-# Writes result to file
+# Create Dockerfile
 print(MIDAS_parser.create_dockerfile(args.file, args.output))
 
+os.system('type Dockerfile')
+
 if not args.tag:
-    # No image to build
     sys.exit()
 
 #################
@@ -113,7 +147,7 @@ if type(args.tag) != str:
 docker_image_name_pattern = re.compile(r"^[a-zA-Z0-9]([\w.-]+\/)*[\w.-]+$", re.IGNORECASE)
 
 if not docker_image_name_pattern.match(args.tag):
-    sys.exit("Invalid tag, docker images must be at most 126 characters long and composed of only alphanumeric, dots, underscores, or dash characters")
+    sys.exit("Invalid Tag, docker images must be at most 126 characters long and composed of only alphanumeric, dots, underscores, or dash characters")
 
 dockerhub_username = args.username
 
