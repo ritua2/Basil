@@ -31,7 +31,12 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 # base image
-base_images = ["ubuntu", "debian", "node", "postgres", "nginx", "python"]
+base_images = ["ubuntu:23.10", "ubuntu:20.04",
+               "debian:stable", "debian:testing",
+               "node:lts", "node:hydrogen",
+               "postgres:13.11", "postgres:12",
+               "nginx:perl", "nginx:mainline",
+               "python:3.12-rc", "python:slim-buster"]
 
 parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
