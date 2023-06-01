@@ -10,7 +10,7 @@ import getpass
 import os
 import re
 import sys
-import subprocess
+# import subprocess
 import fileinput
 
 import color_print
@@ -31,12 +31,12 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
 # base image
-base_images = ["ubuntu:23.10", "ubuntu:20.04",
-               "debian:stable", "debian:testing",
-               "node:lts", "node:hydrogen",
-               "postgres:13.11", "postgres:12",
-               "nginx:perl", "nginx:mainline",
-               "python:3.12-rc", "python:slim-buster"]
+base_images = ["ubuntu:23.10", "ubuntu:kinetic",
+               "debian:stable", "debian:11",
+               "node:lts", "node:19-bullseye",
+               "postgres:13.11", "postgres:14",
+               "nginx:1.21.6", "nginx:mainline",
+               "python:3.12-rc", "python:3.10.4"]
 
 parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
