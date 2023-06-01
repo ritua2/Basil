@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:kinetic
 
 WORKDIR /MIDAS
 ENV c1 test
