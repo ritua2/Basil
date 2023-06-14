@@ -1,0 +1,293 @@
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript.sh
+2023/05/26 00:41:33 http2: server: error reading preface from client //./pipe/docker_engine: file has already been closed
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript.sh.txt
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ls -ltr myscript.sh
+-rwxr-xr-x 1 armaa 197609 72 May 26 00:39 myscript.sh*
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ cat myscript.sh
+#!/bin/bash
+
+docker build -t helloworld2:latest -f abc .  > mylog2.txt
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ q
+bash: q: command not found
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ls -ltr myscript2.sh
+-rwxr-xr-x 1 armaa 197609 72 May 26 00:43 myscript2.sh*
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ls
+ __pycache__/     color_print.py   MIDAS.py        mylog.txt      myscript.sh.txt*  'Possible Improv'/         tests/
+ abc              Dockerfile       midas.yml       mylog2.txt     myscript2.sh*      README.md
+ buildnpush.sh*   hello/           MIDASrenew.py   myscript.sh*   parser.py          sample-input.midas.json
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ cat mylog2.txt
+failed to get console mode for stdout: The handle is invalid.
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load build definition from abc                              0.0s
+ => => transferring dockerfile: 456B                                       0.0s
+ => [internal] load .dockerignore                                          0.0s
+ => => transferring context: 2B                                            0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest           0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                             0.0s
+ => [internal] load build context                                          0.0s
+ => => transferring context: 45B                                           0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                            0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                            0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.m  0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc   0.0s
+ => exporting to image                                                     0.0s
+ => => exporting layers                                                    0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15a  0.0s
+ => => naming to docker.io/library/helloworld2:latest                      0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load build definition from abc                                                                      0.0s
+ => => transferring dockerfile: 456B                                                                               0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15af9ec98925e3c84bce5d                       0.0s
+ => => naming to docker.io/library/helloworld2:latest                                                              0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ cat myscript2.sh
+#!/bin/bash
+MIDASrenew.py
+docker build -t helloworld2:latest -f abc .
+
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+./myscript2.sh: line 2: MIDASrenew.py: command not found
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load build definition from abc                                                                      0.0s
+ => => transferring dockerfile: 456B                                                                               0.0s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15af9ec98925e3c84bce5d                       0.0s
+ => => naming to docker.io/library/helloworld2:latest                                                              0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ls
+ __pycache__/     color_print.py   MIDAS.py        mylog.txt      myscript.sh.txt*  'Possible Improv'/         tests/
+ abc              Dockerfile       midas.yml       mylog2.txt     myscript2.sh*      README.md
+ buildnpush.sh*   hello/           MIDASrenew.py   myscript.sh*   parser.py          sample-input.midas.json
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+Python was not found; run without arguments to install from the Microsoft Store, or disable this shortcut from Settings> Manage App Execution Aliases.
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load build definition from abc                                                                      0.0s
+ => => transferring dockerfile: 456B                                                                               0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15af9ec98925e3c84bce5d                       0.0s
+ => => naming to docker.io/library/helloworld2:latest                                                              0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ which python
+/c/Users/armaa/AppData/Local/Programs/Python/Python311/python
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+./MIDASrenew.py: line 5: $'\nBASICS\n\nMain MIDAS standalone program\n': command not found
+./MIDASrenew.py: line 7: import: command not found
+./MIDASrenew.py: line 8: import: command not found
+./MIDASrenew.py: line 9: import: command not found
+./MIDASrenew.py: line 10: import: command not found
+./MIDASrenew.py: line 11: import: command not found
+./MIDASrenew.py: line 12: import: command not found
+./MIDASrenew.py: line 14: import: command not found
+./MIDASrenew.py: line 15: import: command not found
+./MIDASrenew.py: line 17: syntax error near unexpected token `('
+./MIDASrenew.py: line 17: `parser = argparse.ArgumentParser()'
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load build definition from abc                                                                      0.0s
+ => => transferring dockerfile: 456B                                                                               0.0s
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15af9ec98925e3c84bce5d                       0.0s
+ => => naming to docker.io/library/helloworld2:latest                                                              0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ which python
+/c/Users/armaa/AppData/Local/Programs/Python/Python311/python
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./myscript2.sh
+Dockerfile created at 'Dockerfile'
+FROM ubuntu:latest
+
+WORKDIR /MIDAS
+ENV c1 test
+ENV c2 test2
+
+ENV d1 sample1
+ENV d2 sample2
+
+COPY sample-input.midas.json .
+COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json
+RUN apt-get update &&\
+    apt-get install -y python3 gcc &&\
+    apt-get install -y curl &&\
+    apt-get install -y wget
+
+CMD ["echo", "'Hello,", "my", "name", "is", "Armaan!", "This", "is", "finally", "working...'"]
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load build definition from abc                                                                      0.1s
+ => => transferring dockerfile: 456B                                                                               0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:129a10b7f8ed824117c625fe37de27ccff1d44d89c15af9ec98925e3c84bce5d                       0.0s
+ => => naming to docker.io/library/helloworld2:latest                                                              0.0s
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ vi myscript2.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ^C
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ which python
+/c/Users/armaa/AppData/Local/Programs/Python/Python311/python
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ chmod +x buildnpush.sh
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$ ./buildnpush.sh
+Dockerfile created at 'Dockerfile'
+FROM ubuntu:latest
+
+WORKDIR /MIDAS
+ENV c1 test
+ENV c2 test2
+
+ENV d1 sample1
+ENV d2 sample2
+
+COPY sample-input.midas.json .
+COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json
+RUN apt-get update &&\
+    apt-get install -y python3 gcc &&\
+    apt-get install -y curl &&\
+    apt-get install -y wget
+
+CMD ["echo", "'Hello,", "my", "name", "is", "Armaan!", "This", "is", "finally", "working...'"]
+[+] Building 0.2s (10/10) FINISHED
+ => [internal] load .dockerignore                                                                                  0.1s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load build definition from Dockerfile                                                               0.1s
+ => => transferring dockerfile: 463B                                                                               0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:6d9eea9a133b47a78b651a127084936f7dff704c4e49717e7421ca7a1d1cb640                       0.0s
+ => => naming to docker.io/cheemaboi484/midas:build_push_check                                                     0.0s
+Login Succeeded
+
+Logging in with your password grants your terminal complete access to your account.
+For better security, log in with a limited-privilege personal access token. Learn more at https://docs.docker.com/go/access-tokens/
+The push refers to repository [docker.io/cheemaboi484/midas]
+3497042fab92: Layer already exists
+97c265734ffb: Layer already exists
+99c2a1b88b98: Layer already exists
+58b27dce5a78: Layer already exists
+b93c1bd012ab: Layer already exists
+build_push_check: digest: sha256:22fddd6f84a1baf3b76adcb864fccc9b1d0bd31b333595e0b7069b0a6bc7f728 size: 1362
+Removing login credentials for https://index.docker.io/v1/
+
+armaa@ThinkPadADSC MINGW64 ~/DockerImageBuilder (master)
+$
