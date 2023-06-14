@@ -24,7 +24,14 @@ git clone https://github.com/ritua2/DockerImageBuilder
 cd DockerImageBuilder
 ```
 
-
+## Usage (NEW)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+(i) Run the MIDAS script by typing out "MIDAS.py", in terminal, on the correct path.
+(ii) Select the base image you want from the given options by entering the corresponding numerical value ONLY.
+(iii) The terminal will output the fresh Dockerfile for user verification, if correct, enter (docker build .) command.
+(iv) The image will be built and the name will be shown at the end of the output, copy the name, type (docker run image_name), and the image will be run and the output will be shown.
+(v) VOILA!!!
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 ## Usage
 
