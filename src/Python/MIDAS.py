@@ -36,7 +36,8 @@ base_images = ["ubuntu:23.10", "ubuntu:kinetic",
                "node:lts", "node:19-bullseye",
                "postgres:13.11", "postgres:14",
                "nginx:1.21.6", "nginx:mainline",
-               "python:3.12-rc", "python:3.10.4"]
+               "python:3.12-rc", "python:3.10.4",
+               "graphcore/tensorflow", "graphcore/pytorch"]
 
 parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
 parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
