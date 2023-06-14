@@ -1,0 +1,256 @@
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ docker run -d -p 5000:5000 --restart always --name registry registry:2
+Unable to find image 'registry:2' locally
+2: Pulling from library/registry
+8a49fdb3b6a5: Already exists
+58116d8bf569: Pull complete
+4cb4a93be51c: Pull complete
+cbdeff65a266: Pull complete
+6b102b34ed3d: Pull complete
+Digest: sha256:20d084723c951e377e1a2a5b3df316173a845e300d57ccdd8ae3ab2da3439746
+Status: Downloaded newer image for registry:2
+8257a9a8140e3cfb76224e4e90620c4a0b14762a450a416139a5a7218b9ce784
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ docker ps
+CONTAINER ID   IMAGE        COMMAND                  CREATED         STATUS        PORTS                    NAMES
+8257a9a8140e   registry:2   "/entrypoint.sh /etc…"   7 seconds ago   Up 5 seconds   0.0.0.0:5000->5000/tcp   registry
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ git clone https://github.com/theupdateframework/notary[.]git
+Cloning into 'notary[.]git'...
+remote: Repository not found.
+fatal: repository 'https://github.com/theupdateframework/notary[.]git/' notfound
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ git clone https://github.com/notaryproject/notary[.]git
+Cloning into 'notary[.]git'...
+remote: Repository not found.
+fatal: repository 'https://github.com/notaryproject/notary[.]git/' not found
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ git clone https://github.com/notaryproject/notary
+Cloning into 'notary'...
+remote: Enumerating objects: 28838, done.
+remote: Counting objects: 100% (37/37), done.
+remote: Compressing objects: 100% (36/36), done.
+remote: Total 28838 (delta 0), reused 0 (delta 0), pack-reused 28801
+Receiving objects: 100% (28838/28838), 39.97 MiB | 3.40 MiB/s, done.
+Resolving deltas: 100% (17374/17374), done.
+Updating files: 100% (2034/2034), done.
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop (master)
+$ cd notary/
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker-compose up -d
+[+] Running 10/10
+ ✔ mysql 9 layers [⣿⣿⣿⣿⣿⣿⣿⣿⣿]      0B/0B      Pulled                  73.0s
+   ✔ 99803d4b97f3 Pull complete                                       30.1s
+   ✔ b8bc823a83fd Pull complete                                       30.3s
+   ✔ 16685f710f5d Pull complete                                       31.6s
+   ✔ b5660ff63058 Pull complete                                       31.7s
+   ✔ 9fa7ed7a919d Pull complete                                       31.9s
+   ✔ 09afbb4d4d00 Pull complete                                       65.9s
+   ✔ d5a0e865b236 Pull complete                                       66.1s
+   ✔ 464e82927823 Pull complete                                       66.2s
+   ✔ dfaa3a5c705f Pull complete                                       66.4s
+[+] Building 4890.1s (7/12)
+ => [internal] load build definition from signer.Dockerfile            0.3s
+ => => transferring dockerfile: 1.03kB                                 0.0s
+ => [internal] load .dockerignore                                      0.3s
+ => => transferring context: 2B                                        0.1s
+ => [internal] load metadata for docker.io/library/golang:1.17.13-alp  6.6s
+ => [auth] library/golang:pull token for registry-1.docker.io          0.0s
+ => [1/7] FROM docker.io/library/golang:1.17.13-alpine@sha256:99ddec  50.0s
+ => => resolve docker.io/library/golang:1.17.13-alpine@sha256:99ddec1  0.0s
+ => => sha256:99ddec1bbfd6d6bca3f9804c02363daee8c8524 1.65kB / 1.65kB  0.0s
+ => => sha256:c80567372be0d486766593cc722d3401038e2f1 1.36kB / 1.36kB  0.0s
+ => => sha256:270c4f58750f15170f29d4a8624b6d07de09de6 5.23kB / 5.23kB  0.0s
+ => => sha256:530afca65e2ea04227630ae746e0c85b2bd1a17 2.80MB / 2.80MB  1.8s
+ => => sha256:d450d4da0343091dd049727bcf8ccaae8c2 271.83kB / 271.83kB  1.0s
+ => => sha256:8162171ecb65551f90de8eb79be7a98850c0b4fa7af 153B / 153B  0.7s
+ => => sha256:ff63b82a42d3d44071011eb2a1262a77c1 109.95MB / 109.95MB  37.9s
+ => => sha256:5b4b56e6b99464c54d3f129e00bd20b617c458db956 155B / 155B  1.8s
+ => => extracting sha256:530afca65e2ea04227630ae746e0c85b2bd1a179379c  2.4s
+ => => extracting sha256:d450d4da0343091dd049727bcf8ccaae8c22b9b11cbb  2.0s
+ => => extracting sha256:8162171ecb65551f90de8eb79be7a98850c0b4fa7af6  0.0s
+ => => extracting sha256:ff63b82a42d3d44071011eb2a1262a77c15520b9405  11.2s
+ => => extracting sha256:5b4b56e6b99464c54d3f129e00bd20b617c458db956f  0.0s
+ => [internal] load build context                                     12.9s
+ => => transferring context: 76.12MB                                  12.8s
+ => ERROR [2/7] RUN apk add --update git gcc libc-dev               4833.1s
+------
+ > [2/7] RUN apk add --update git gcc libc-dev:
+#0 0.903 fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/main/x86_64/APKINDEX.tar.gz
+#0 59.73 fetch https://dl-cdn.alpinelinux.org/alpine/v3.16/community/x86_64/APKINDEX.tar.gz
+#0 257.1 (1/19) Upgrading musl (1.2.3-r0 -> 1.2.3-r3)
+#0 293.2 (2/19) Installing libgcc (11.2.1_git20220219-r2)
+#0 299.5 (3/19) Installing libstdc++ (11.2.1_git20220219-r2)
+#0 355.5 (4/19) Installing binutils (2.38-r3)
+#0 598.3 (5/19) Installing libgomp (11.2.1_git20220219-r2)
+#0 607.2 (6/19) Installing libatomic (11.2.1_git20220219-r2)
+#0 608.8 (7/19) Installing gmp (6.2.1-r2)
+#0 628.7 (8/19) Installing isl22 (0.22-r0)
+#0 697.8 (9/19) Installing mpfr4 (4.1.0-r0)
+#0 898.4 (10/19) Installing mpc1 (1.2.1-r0)
+#0 903.4 (11/19) Installing gcc (11.2.1_git20220219-r2)
+#0 4827.0 ERROR: Failed to create usr/libexec/gcc/x86_64-alpine-linux-musl/11.2.1/lto1: Connection aborted
+#0 4827.0 ERROR: gcc-11.2.1_git20220219-r2: BAD signature
+#0 4827.4 (12/19) Installing brotli-libs (1.0.9-r6)
+#0 4829.3 (13/19) Installing nghttp2-libs (1.47.0-r0)
+#0 4829.4 (14/19) Installing libcurl (8.1.2-r0)
+#0 4829.5 (15/19) Installing expat (2.5.0-r0)
+#0 4829.5 (16/19) Installing pcre2 (10.40-r0)
+#0 4829.6 (17/19) Installing git (2.36.6-r0)
+#0 4830.7 (18/19) Installing musl-dev (1.2.3-r3)
+#0 4832.3 (19/19) Installing libc-dev (0.7.2-r3)
+#0 4832.4 Executing busybox-1.35.0-r15.trigger
+#0 4832.5 1 error; 46 MiB in 32 packages
+------
+failed to solve: process "/bin/sh -c apk add --update git gcc libc-dev" didnot complete successfully: exit code: 1
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker-compose up -d
+[+] Building 174.8s (13/13) FINISHED
+ => [internal] load .dockerignore                                      0.0s
+ => => transferring context: 2B                                        0.0s
+ => [internal] load build definition from signer.Dockerfile            0.1s
+ => => transferring dockerfile: 1.03kB                                 0.0s
+ => [internal] load metadata for docker.io/library/golang:1.17.13-alp  3.5s
+ => [auth] library/golang:pull token for registry-1.docker.io          0.0s
+ => [internal] load build context                                      0.7s
+ => => transferring context: 162.57kB                                  0.7s
+ => CACHED [1/7] FROM docker.io/library/golang:1.17.13-alpine@sha256:  0.0s
+ => [2/7] RUN apk add --update git gcc libc-dev                      115.8s
+ => [3/7] RUN go get -tags 'mysql postgres file' github.com/golang-m  33.4s
+ => [4/7] COPY . /go/src/github.com/theupdateframework/notary          2.7s
+ => [5/7] WORKDIR /go/src/github.com/theupdateframework/notary         0.0s
+ => [6/7] RUN chmod 0600 ./fixtures/database/*                         1.5s
+ => [7/7] RUN go install     -tags pkcs11     -ldflags "-w -X github  10.5s
+ => exporting to image                                                 7.3s
+ => => exporting layers                                                7.3s
+ => => writing image sha256:8c348dfdabc0d9186abd575dc28354e7665c5e682  0.0s
+ => => naming to docker.io/library/notary-signer                       0.0s
+[+] Building 18.8s (12/12) FINISHED
+ => [internal] load .dockerignore                                      0.0s
+ => => transferring context: 2B                                        0.0s
+ => [internal] load build definition from server.Dockerfile            0.1s
+ => => transferring dockerfile: 955B                                   0.0s
+ => [internal] load metadata for docker.io/library/golang:1.17.13-alp  1.0s
+ => [internal] load build context                                      0.5s
+ => => transferring context: 162.57kB                                  0.4s
+ => [1/7] FROM docker.io/library/golang:1.17.13-alpine@sha256:99ddec1  0.0s
+ => CACHED [2/7] RUN apk add --update git gcc libc-dev                 0.0s
+ => CACHED [3/7] RUN go get -tags 'mysql postgres file' github.com/go  0.0s
+ => CACHED [4/7] COPY . /go/src/github.com/theupdateframework/notary   0.0s
+ => CACHED [5/7] WORKDIR /go/src/github.com/theupdateframework/notary  0.0s
+ => CACHED [6/7] RUN chmod 0600 ./fixtures/database/*                  0.0s
+ => [7/7] RUN go install     -tags pkcs11     -ldflags "-w -X github  16.6s
+ => exporting to image                                                 0.6s
+ => => exporting layers                                                0.6s
+ => => writing image sha256:d3d2530c4aef34a71e3a51b68f6a2cdf0807a1176  0.0s
+ => => naming to docker.io/library/notary-server                       0.0s
+[+] Running 6/6
+ ✔ Network notary_mdb           Created                                0.2s
+ ✔ Network notary_sig           Created                                0.1s
+ ✔ Volume "notary_notary_data"  Creat...                               0.0s
+ ✔ Container notary-mysql-1     Started                                2.8s
+ ✔ Container notary-signer-1    Started                                4.0s
+ ✔ Container notary-server-1    Started                                6.1s
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker run -d -p 5000:5000 --restart always --name registry registry:2
+docker: Error response from daemon: Conflict. The container name "/registry" is already in use by container "8257a9a8140e3cfb76224e4e90620c4a0b14762a450a416139a5a7218b9ce784". You have to remove (or rename) that container to beable to reuse that name.
+See 'docker run --help'.
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED
+STATUS              PORTS                    NAMES
+64f14698eb7d   mariadb:10.4   "docker-entrypoint.s…"   About a minute agoUp About a minute   3306/tcp                 notary-mysql-1
+8257a9a8140e   registry:2     "/entrypoint.sh /etc…"   2 hours ago
+Up 2 hours          0.0.0.0:5000->5000/tcp   registry
+$
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker pull ubuntu:latest
+latest: Pulling from library/ubuntu
+837dd4791cdc: Pull complete
+Digest: sha256:ac58ff7fe25edc58bdf0067ca99df00014dbd032e2246d30a722fa348fd799a5
+Status: Downloaded newer image for ubuntu:latest
+docker.io/library/ubuntu:latest
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker tag ubuntu:latest localhost:5000/ubuntu:mine
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker push localhost:5000/ubuntu:mine
+The push refers to repository [localhost:5000/ubuntu]
+966e94ab6e16: Pushed
+mine: digest: sha256:e95d9f01494ce72bb7a1e4f3d74894c86b73c18182bb6449fac43463e692b412 size: 529
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ export DOCKER_CONTENT_TRUST_SERVER=https://localhost:4443
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust key generate armaan
+Generating key for armaan...
+Enter passphrase for new armaan key with ID d355a77:
+Repeat passphrase for new armaan key with ID d355a77:
+Successfully generated and loaded private key. Corresponding public key available: C:\Users\armaa\Desktop\notary\armaan.pub
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust signer add --key armaan.pub armaan localhost:5000/ubuntu:mine
+Adding signer "armaan" to localhost:5000/ubuntu:mine...
+mkdir C:\Users\armaa\.docker\trust\tuf\localhost:5000: The directory name is invalid.
+
+failed to add signer to: localhost:5000/ubuntu:mine
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust signer add --key armaan.pub armaan C:\Users\armaa\.docker\trust\private\localhost:5000\ubuntu:mine
+Adding signer "armaan" to C:Usersarmaa.dockertrustprivatelocalhost:5000ubuntu:mine...
+invalid reference format: repository name must be lowercase
+
+failed to add signer to: C:Usersarmaa.dockertrustprivatelocalhost:5000ubuntu:mine
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust signer add --key armaan.pub armaan localhost:5000/ubuntu:mine
+Adding signer "armaan" to localhost:5000/ubuntu:mine...
+mkdir C:\Users\armaa\.docker\trust\tuf\localhost:5000: The directory name is invalid.
+
+failed to add signer to: localhost:5000/ubuntu:mine
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust signer add --key armaan.pub armaan registry.example.com/admin
+/demo
+Adding signer "armaan" to registry.example.com/admin/demo...
+Error: error contacting notary server: dial tcp [::1]:4443: connectex: No connection could be made because the target machine actively refused it.
+
+failed to add signer to: registry.example.com/admin/demo
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker trust signer add --key armaan.pub armaan cheemaboi484/midas
+Adding signer "armaan" to cheemaboi484/midas...
+Error: error contacting notary server: dial tcp [::1]:4443: connectex: No connection could be made because the target machine actively refused it.
+
+failed to add signer to: cheemaboi484/midas
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$ docker ps
+CONTAINER ID   IMAGE          COMMAND                  CREATED          STATUS          PORTS                    NAMES
+64f14698eb7d   mariadb:10.4   "docker-entrypoint.s…"   47 minutes ago   Up 46 minutes   3306/tcp                 notary-mysql-1
+8257a9a8140e   registry:2     "/entrypoint.sh /etc…"   2 hours ago      Up 2 hours      0.0.0.0:5000->5000/tcp   registry
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$  docker trust signer add --key armaan.pub armaan localhost:5000/ubuntu
+Adding signer "armaan" to localhost:5000/ubuntu...
+mkdir C:\Users\armaa\.docker\trust\tuf\localhost:5000: The directory name is invalid.
+
+failed to add signer to: localhost:5000/ubuntu
+
+armaa@ThinkPadADSC MINGW64 ~/Desktop/notary (master)
+$
