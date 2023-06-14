@@ -1,0 +1,118 @@
+Microsoft Windows [Version 10.0.22624.1755]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\armaa\DockerImageBuilder>MIDASrenew.py -t image_v2
+Dockerfile created at 'Dockerfile'
+Dockerhub username: cheemaboi484
+Enter dockerhub password:
+
+C:\Users\armaa\DockerImageBuilder>docker build image_v2
+[+] Building 0.0s (0/0)
+ERROR: unable to prepare context: path "image_v2" not found
+
+C:\Users\armaa\DockerImageBuilder>docker build .
+[+] Building 0.1s (10/10) FINISHED
+ => [internal] load .dockerignore                                                                                  0.0s
+ => => transferring context: 2B                                                                                    0.0s
+ => [internal] load build definition from Dockerfile                                                               0.0s
+ => => transferring dockerfile: 463B                                                                               0.0s
+ => [internal] load metadata for docker.io/library/ubuntu:latest                                                   0.0s
+ => [1/5] FROM docker.io/library/ubuntu:latest                                                                     0.0s
+ => [internal] load build context                                                                                  0.0s
+ => => transferring context: 45B                                                                                   0.0s
+ => CACHED [2/5] WORKDIR /MIDAS                                                                                    0.0s
+ => CACHED [3/5] COPY sample-input.midas.json .                                                                    0.0s
+ => CACHED [4/5] COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json                                 0.0s
+ => CACHED [5/5] RUN apt-get update &&    apt-get install -y python3 gcc &&    apt-get install -y curl &&    apt-  0.0s
+ => exporting to image                                                                                             0.0s
+ => => exporting layers                                                                                            0.0s
+ => => writing image sha256:6d9eea9a133b47a78b651a127084936f7dff704c4e49717e7421ca7a1d1cb640                       0.0s
+
+C:\Users\armaa\DockerImageBuilder>docker push image_v2 cheemaboi484/midas:image_v2
+"docker push" requires exactly 1 argument.
+See 'docker push --help'.
+
+Usage:  docker push [OPTIONS] NAME[:TAG]
+
+Upload an image to a registry
+
+C:\Users\armaa\DockerImageBuilder>docker push --help
+
+Usage:  docker push [OPTIONS] NAME[:TAG]
+
+Upload an image to a registry
+
+Aliases:
+  docker image push, docker push
+
+Options:
+  -a, --all-tags                Push all tags of an image to the repository
+      --disable-content-trust   Skip image signing (default true)
+  -q, --quiet                   Suppress verbose output
+
+C:\Users\armaa\DockerImageBuilder>docker push image_v2
+Using default tag: latest
+The push refers to repository [docker.io/library/image_v2]
+An image does not exist locally with the tag: image_v2
+
+C:\Users\armaa\DockerImageBuilder>
+C:\Users\armaa\DockerImageBuilder>docker tag 6d9eea9a133b47a78b651a127084936f7dff704c4e49717e7421ca7a1d1cb640 image_v2
+
+C:\Users\armaa\DockerImageBuilder>docker push image_v2
+Using default tag: latest
+The push refers to repository [docker.io/library/image_v2]
+3497042fab92: Preparing
+97c265734ffb: Preparing
+99c2a1b88b98: Preparing
+58b27dce5a78: Preparing
+b93c1bd012ab: Preparing
+denied: requested access to the resource is denied
+
+C:\Users\armaa\DockerImageBuilder>docker push image_v2 cheemaboi484/midas:image_v2
+"docker push" requires exactly 1 argument.
+See 'docker push --help'.
+
+Usage:  docker push [OPTIONS] NAME[:TAG]
+
+Upload an image to a registry
+
+C:\Users\armaa\DockerImageBuilder>docker push cheemaboi484/midas:image_v2
+The push refers to repository [docker.io/cheemaboi484/midas]
+tag does not exist: cheemaboi484/midas:image_v2
+
+C:\Users\armaa\DockerImageBuilder>docker push cheemaboi484/midas
+Using default tag: latest
+The push refers to repository [docker.io/cheemaboi484/midas]
+tag does not exist: cheemaboi484/midas:latest
+
+C:\Users\armaa\DockerImageBuilder>docker tag image_v2 cheemaboi484/midas:testimage
+
+C:\Users\armaa\DockerImageBuilder>docker push cheemaboi484/midas:testimage
+The push refers to repository [docker.io/cheemaboi484/midas]
+3497042fab92: Pushed
+97c265734ffb: Pushed
+99c2a1b88b98: Pushed
+58b27dce5a78: Pushed
+b93c1bd012ab: Pushed
+testimage: digest: sha256:22fddd6f84a1baf3b76adcb864fccc9b1d0bd31b333595e0b7069b0a6bc7f728 size: 1362
+
+C:\Users\armaa\DockerImageBuilder>docker run 22fddd6f84a1baf3b76adcb864fccc9b1d0bd31b333595e0b7069b0a6bc7f728
+docker: Error response from daemon: No such image: sha256:22fddd6f84a1baf3b76adcb864fccc9b1d0bd31b333595e0b7069b0a6bc7f728.
+See 'docker run --help'.
+
+C:\Users\armaa\DockerImageBuilder>docker run image_v2
+'Hello, my name is Armaan! This is finally working...'
+
+C:\Users\armaa\DockerImageBuilder>^A
+'☺' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\armaa\DockerImageBuilder>command | clip
+'command' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\armaa\DockerImageBuilder>Command | clip
+'Command' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\armaa\DockerImageBuilder>
