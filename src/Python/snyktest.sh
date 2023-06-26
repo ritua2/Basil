@@ -1,7 +1,7 @@
 #!/bin/bash
 
-image_id=$(docker image list | awk 'NR>1{print $3}' | head -n 2 | tail -n 1)
-
+#image_id=$(docker image list | awk 'NR>1{print $3}' | head -n 2 | tail -n 1)
+image_id=$1
 echo "Image ID: $image_id"
 
 read -p "Would you like to work in Batch Mode or Interactive Mode? Please enter 1 for Batch and 2 for Interactive Mode: " option
@@ -12,7 +12,7 @@ if [[ "$option" == "1" ]]; then
 
 elif [[ "$option" == "2" ]]; then
   # Interactive mode
-  echo -e "\nYou are now running Interactive Mode, hang on tight..." 
+  echo -e "\nYou are now running Interactive Mode, hang on tight..."
   snyk container test sha256:$image_id > SNYKoutput.txt
   recommendations_line=$(grep -n "Recommendations" SNYKoutput.txt | cut -d':' -f1)
   if [ -n "$recommendations_line" ]; then
