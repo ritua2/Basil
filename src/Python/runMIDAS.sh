@@ -6,7 +6,7 @@ python ./interactive.py
 echo -e "\nNow running MIDAS script..."
 
 # Step 1
-python3 MIDAS2.py
+python3 MIDAS.py
 
 # Step 2
 echo -e "\nBuilding your custom Docker Image..."
