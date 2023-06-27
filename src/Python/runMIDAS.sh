@@ -1,6 +1,8 @@
 #!/bin/bash
 
 echo -e "\nWelcome to Project Basil!"
+
+python ./interactive.py
 echo -e "\nNow running MIDAS script..."
 
 # Step 1
