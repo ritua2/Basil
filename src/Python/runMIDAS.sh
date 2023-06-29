@@ -12,7 +12,7 @@ if [ $? -eq 1 ]; then
     exit 1
 fi
 
-echo "\nNow running MIDAS script..."
+echo "\nGenerating Dockerfile..."
 
 # Step 1
 python3 $script_dir/MIDAS.py
@@ -23,25 +23,32 @@ if [ $? -eq 1 ]; then
     exit 1
 fi
 
-# Step 2
-echo "\nBuilding your custom Docker Image..."
-image_id=$(docker build -t my_image -f Dockerfile . | grep -o "Successfully built [0-9a-f]*" | awk '{print $3}')
-echo "Image ID: $image_id"
-# grep to get id, push int to snyk and run cmd
+if [[ $1 == "-b" ]]; then
+    # Step 2
+    echo "\nBuilding your Docker Image..."
+    docker build -t my_image -f Dockerfile . # Builds docker image
+    image_id=`docker image inspect --format='{{.Id}}' my_image| cut -d ':' -f 2`
 
-# Step 3
-echo "\n Running SNYK analysis for your image..."
-echo "Image ID: $image_id"
+    echo "Image ID: $image_id"
+    # grep to get id, push int to snyk and run cmd
 
-## Run snyk test
-bash $script_dir/snyktest.sh $image_id
+    # Step 3
+    echo "\n Running SNYK analysis for your image..."
+    echo "Image ID: $image_id"
+
+    ## Run snyk test
+    bash $script_dir/snyktest.sh $image_id
 
 
-# Step 4
-echo "\nRunning your Docker image..."
-docker run my_image
+    # Step 4
+    echo "\nRunning your Docker image..."
+    docker run my_image
+   
+else
+    echo ""
+fi
 
-# Step 5++ go here >>>
-# docker push (here)
+
+
 
 echo "\nMIDAS execution complete! Please feel free to leave us a constructive review.\n"
