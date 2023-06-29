@@ -21,7 +21,7 @@ def parse_commands(filepath):
 # Requires the data in dictionary form
 def provided_instructions(raw_data):
 
-    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environmental variables", "Default command"]
+    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environmental variables", "Default command", "Entry command"]
 
     return [key for key in raw_data if key in valid_tags]
 
@@ -48,6 +48,8 @@ def order_inputs(raw_data):
     tags_to_order.remove("Base")
     if "Default command" in tags_to_order:
         tags_to_order.remove("Default command")
+    if "Entry command" in tags_to_order:
+        tags_to_order.remove("Entry command")
 
     all_tags = []
 
@@ -144,7 +146,7 @@ def df_env(envar_instruction):
     A = ""
 
     for varname in envar_instruction:
-        A += "ENV "+varname+" "+envar_instruction[varname]+"\n"
+        A += "ENV "+varname+" "+ str(envar_instruction[varname])+"\n"
 
     return A
 
@@ -158,6 +160,12 @@ def df_cmd(cmd_instruction):
 
     return "CMD [" + ", ".join(cmd_space_broken) + "]"
 
+def df_ent(ent_instruction):
+        ent_space_broken = ent_instruction.split(" ")
+        ent_space_broken = ["\""+a+"\"" for a in ent_space_broken if a != '']
+    
+        return "ENTRYPOINT [" + ", ".join(ent_space_broken) + "]"
+
 
 
 # Given all instructions, it processes them and writes them into a file
@@ -165,7 +173,7 @@ def df_cmd(cmd_instruction):
 # image_base (str): image base
 # default_comm (str): default command
 # ordered_instructions (arr) [number, instruction, type]
-def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, default_comm=False, spacing="    "):
+def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, default_comm=False, entry_comm=False, spacing="    "):
 
     with open(dockerfile_path, "w") as dfp:
         dfp.write(df_base(image_base)+"\n\n")
@@ -181,9 +189,11 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
             elif an_instruction[2] == "Environmental variables":
                 dfp.write(df_env(an_instruction[1])+"\n")
 
-
+        if entry_comm:
+                dfp.write("\n"+df_ent(entry_comm)+"\n")
         if default_comm:
             dfp.write("\n"+df_cmd(default_comm)+"\n")
+        
 
 
 
@@ -208,7 +218,7 @@ def create_dockerfile(file_with_data, dockerfile_path, spacing="    "):
 
     if "Default command" not in original_data:
         original_data["Default command"] = False
-
-    write_to_dockerfile(dockerfile_path, image_base, combined_inputs, original_data["Default command"], spacing)
+    
+    write_to_dockerfile(dockerfile_path, image_base, combined_inputs, original_data["Default command"], original_data["Entry command"], spacing)
     return "Dockerfile created at '"+dockerfile_path+"'"
 
