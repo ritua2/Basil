@@ -1,0 +1,3 @@
+Dockerfile was referenced from: https://github.com/docker-library/tomcat/blob/master/11.0/jdk21/openjdk-slim-bookworm/Dockerfile
+
+It has not been tested for BASIL yet, please keep an eye on this page for further updates...
