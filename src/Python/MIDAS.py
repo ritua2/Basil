@@ -74,31 +74,6 @@ docker_instructions = MIDAS_parser.order_inputs(provided_data)
 if docker_instructions[1]:
     sys.exit(docker_instructions[0])
 
-# Prompt user for base image
-if not args.base_image:
-    print("Available set of base images for MIDAS: ")
-    for index, image in enumerate(base_images, start=1):
-        print(f"{index}. {image}")
-    selection = input("Please select the base image by entering its number: ")
-
-# Validate selection
-    if selection.isdigit() and 1 <= int(selection) <= len(base_images):
-        args.base_image = base_images[int(selection) - 1]
-
-        # SED Command LINUX ONLY
-        # command = f"sed -i 's/^FROM.*/FROM {args.base_image}/' dummy.yml"
-        # subprocess.run(command, shell=True, check=True)
-
-        # Replace the FROM line in the YAML file WINDOWS ONLY
-        with fileinput.FileInput("midas.yml", inplace=True) as file:
-            for line in file:
-                if line.startswith("Base:"):
-                    print(f"Base: \"{args.base_image}\"")
-                else:
-                    print(line, end="")
-
-    else:
-        sys.exit("Invalid selection. Exiting...")
 
 docker_instructions = docker_instructions[0]
 

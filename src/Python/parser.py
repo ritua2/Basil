@@ -219,6 +219,6 @@ def create_dockerfile(file_with_data, dockerfile_path, spacing="    "):
     if "Default command" not in original_data:
         original_data["Default command"] = False
     
-    write_to_dockerfile(dockerfile_path, image_base, combined_inputs, original_data["Default command"], original_data["Entry command"], spacing)
+    write_to_dockerfile(dockerfile_path, image_base, combined_inputs, original_data.get("Default command",False), original_data.get("Entry command",False), spacing)
     return "Dockerfile created at '"+dockerfile_path+"'"
 
