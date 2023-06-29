@@ -53,37 +53,41 @@ while True:
         SETUP_CMDS.append(CMD)
 
 
+ENTRYPOINT = input("Enter the entry command. Entry command runs every time you run the image. By default, Entry command starts a new shell session: [OPTIONAL]")
 
 DEFAULT = input("Enter the default command:")
 
-
-
 with open('midas.yml','w') as midas_file:
+    # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
+    midas_file.write("Base: \"ubuntu:latest\"\n")
+
     NUM = 1
 
     midas_file.write("Working directory:\n")
-    midas_file.write(f'\t1: "{WORKDIR}"\n')
+    midas_file.write(f' 1: "{WORKDIR}"\n')
     NUM+=1
 
     midas_file.write("Environmental variables:\n")
     for _ in range(len(ENV_VARIABLES)):
-        midas_file.write(f'\t{NUM}:\n')
-        midas_file.write(f'\t\t{ENV_VARIABLES[_][0]}: {ENV_VARIABLES[_][1]}\n')
+        midas_file.write(f' {NUM}:\n')
+        midas_file.write(f'  {ENV_VARIABLES[_][0]}: {ENV_VARIABLES[_][1]}\n')
         NUM += 1
 
     midas_file.write("Contents:\n")
     for _ in range(len(CONTENTS)):
-        midas_file.write(f'\t{NUM}: "{CONTENTS[_][0]}:{CONTENTS[_][1]}"\n')
+        midas_file.write(f' {NUM}: "{CONTENTS[_][0]}:{CONTENTS[_][1]}"\n')
         NUM+=1
 
     midas_file.write("Setup:\n")
     for _ in range(len(PACKAGES)):
-        midas_file.write(f'\t{NUM}: "apt-get install {PACKAGES[_]}"\n')
+        midas_file.write(f' {NUM}: "apt-get install {PACKAGES[_]}"\n')
         NUM+=1
     for _ in range(len(SETUP_CMDS)):
-        midas_file.write(f'\t{NUM}: "{SETUP_CMDS[_]}"\n')
+        midas_file.write(f' {NUM}: "{SETUP_CMDS[_]}"\n')
         NUM+=1
     
+    midas_file.write("Entry command: ")
+    midas_file.write(f'{ENTRYPOINT}\n')
 
     midas_file.write("Default command: ")
     midas_file.write(f'{DEFAULT}\n')

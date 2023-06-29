@@ -2,11 +2,23 @@
 
 echo -e "\nWelcome to Project Basil!"
 
-python ./interactive.py
+python3 ./interactive.py
+# CHECK IF ABOVE COMMAND EXITED WITH ERROR CODE
+if [ $? -eq 1 ]; then
+    echo -e "\nERROR: Exiting MIDAS..."
+    exit 1
+fi
+
 echo -e "\nNow running MIDAS script..."
 
 # Step 1
 python3 MIDAS.py
+
+# CHECK IF ABOVE COMMAND EXITED WITH ERROR CODE
+if [ $? -eq 1 ]; then
+    echo -e "\nERROR: Exiting MIDAS..."
+    exit 1
+fi
 
 # Step 2
 echo -e "\nBuilding your custom Docker Image..."

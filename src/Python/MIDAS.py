@@ -111,7 +111,8 @@ warnings_to_check = {"CMD": not args.ignore_cmd_warnings,
 docker_translator = {
     "Contents":"COPY",
     "Setup":"RUN",
-    "Default command":"CMD"
+    "Entry command":"ENTRYPOINT",
+    "Default command":"CMD",
 }
 
 midas_translator = {v: k for k, v in docker_translator.items()}
