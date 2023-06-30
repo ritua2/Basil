@@ -6,7 +6,7 @@ The "containerization" of software applications not only future-proofs them and 
 Basil will be useful across diverse domains in disseminating the research outcomes in the form of ready-to-use Docker/Singularity images that can contain input, source code, and output related to the research all packaged together in a single image where possible. Users will provide the recipes for building their applications/workflows in one of the following forms (1) Makefiles/CMakefiles, (2) scripts, (3) commands, or (4) a text-file with predefined keywords and notations (templates for which will be provided by the project team). These recipes (e.g., in Makefiles or text-files) will be parsed, and Dockerfiles or Singularity definition files will be generated. Using a generated Dockerfile or Singularity definition file, a Docker or Singularity image will be built. Next, the image will be scanned for any vulnerabilities, signed, and if the user desires, released in public registries with appropriate licenses. These container images can be tested using the Basil web portal, and can be pulled to run or deploy on diverse hardware platforms on-prem or in the cloud.
 
 # Project Web Portal
-Following is the link to the project's web portal : https://icompute.us . This web portal is currently under development and will be ready for basic use by July 2023.
+Following is the link to the project's web portal : https://icompute.us . This web portal is currently under development and will be ready for basic use by the end of July 2023.
 
 # Acknowledgement
 This project has been generously funded by the National Science Foundation (NSF) through award # [2209946](https://www.nsf.gov/awardsearch/showAward?AWD_ID=2209946&HistoricalAwards=false).
