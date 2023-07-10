@@ -114,7 +114,7 @@ if not args.ignore_warnings:
 # Create Dockerfile
 print(MIDAS_parser.create_dockerfile(args.file, args.output))
 
-os.system('type Dockerfile')
+os.system('cat Dockerfile')
 
 if not args.tag:
     sys.exit()

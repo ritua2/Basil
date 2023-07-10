@@ -1,17 +1,43 @@
-FROM graphcore/tensorflow
+FROM ${TF_SERVING_BUILD_IMAGE} as build_image
+FROM ubuntu:20.04
 
-WORKDIR /MIDAS
-ENV c1 test
-ENV c2 test2
+ARG TF_SERVING_VERSION_GIT_BRANCH=master
+ARG TF_SERVING_VERSION_GIT_COMMIT=head
+ARG DEBIAN_FRONTEND=noninteractive
 
-ENV d1 sample1
-ENV d2 sample2
+LABEL maintainer="gvasudevan@google.com"
+LABEL tensorflow_serving_github_branchtag=${TF_SERVING_VERSION_GIT_BRANCH}
+LABEL tensorflow_serving_github_commit=${TF_SERVING_VERSION_GIT_COMMIT}
 
-COPY sample-input.midas.json .
-COPY sample-input.midas.json /MIDAS/MIDAS/sample-input.midas.json
-RUN apt-get update && apt-get upgrade -y &&\
-    apt-get install -y python3 gcc &&\
-    apt-get install -y curl &&\
-    apt-get install -y wget
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-CMD ["echo", "'Meow~Meow~'"]
+# Install TF Serving pkg
+COPY --from=build_image /usr/local/bin/tensorflow_model_server /usr/bin/tensorflow_model_server
+
+# Expose ports
+# gRPC
+EXPOSE 8500
+
+# REST
+EXPOSE 8501
+
+# Set where models should be stored in the container
+ENV MODEL_BASE_PATH=/models
+RUN mkdir -p ${MODEL_BASE_PATH}
+
+# The only required piece is the model name in order to differentiate endpoints
+ENV MODEL_NAME=model
+
+# Create a script that runs the model server so we can use environment variables
+# while also passing in arguments from the docker command line
+RUN echo '#!/bin/bash \n\n\
+tensorflow_model_server --port=8500 --rest_api_port=8501 \
+--model_name=${MODEL_NAME} --model_base_path=${MODEL_BASE_PATH}/${MODEL_NAME} \
+"$@"' > /usr/bin/tf_serving_entrypoint.sh \
+&& chmod +x /usr/bin/tf_serving_entrypoint.sh
+
+ENTRYPOINT ["/usr/bin/tf_serving_entrypoint.sh"]
