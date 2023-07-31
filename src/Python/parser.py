@@ -21,7 +21,7 @@ def parse_commands(filepath):
 # Requires the data in dictionary form
 def provided_instructions(raw_data):
 
-    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environmental variables", "Default command", "Entry command"]
+    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environmental variables", "Default command", "Entry command", "Expose ports", "Volumes", "Advanced copy"]
 
     return [key for key in raw_data if key in valid_tags]
 
@@ -166,6 +166,22 @@ def df_ent(ent_instruction):
     
         return "ENTRYPOINT [" + ", ".join(ent_space_broken) + "]"
 
+def df_expose(expose_instruction):
+    return "EXPOSE "+ str(expose_instruction)
+
+def df_volume(volume_instruction):
+    return "VOLUME "+ str(volume_instruction)
+
+def df_acopy(acopy_instruction):
+    copy_broken = str(acopy_instruction).split(":")
+    if len(copy_broken) == 1:
+        return "ADD " + acopy_instruction+" ."
+    else:
+        return "ADD "+copy_broken[0]+" "+copy_broken[1]
+
+
+    
+
 
 
 # Given all instructions, it processes them and writes them into a file
@@ -188,6 +204,14 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                 dfp.write(df_copy(an_instruction[1])+"\n")
             elif an_instruction[2] == "Environmental variables":
                 dfp.write(df_env(an_instruction[1])+"\n")
+            elif an_instruction[2] == "Expose ports":
+                dfp.write(df_expose(an_instruction[1])+"\n")
+            elif an_instruction[2] == "Volumes":
+                dfp.write(df_volume(an_instruction[1])+"\n")
+            elif an_instruction[2] == "Advanced copy":
+                dfp.write(df_acopy(an_instruction[1])+"\n")
+
+            
 
         if entry_comm:
                 dfp.write("\n"+df_ent(entry_comm)+"\n")

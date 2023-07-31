@@ -88,6 +88,9 @@ docker_translator = {
     "Setup":"RUN",
     "Entry command":"ENTRYPOINT",
     "Default command":"CMD",
+    "Volumes": "VOLUME",
+    "Expose ports": "EXPOSE",
+    "Advanced copy": "ADD",
 }
 
 midas_translator = {v: k for k, v in docker_translator.items()}
