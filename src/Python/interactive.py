@@ -190,7 +190,7 @@ def main():
                 NUM+=1
         
         if len(ADVANCED_COPY) > 0:
-            midas_file.write("Advanced Copy:\n")
+            midas_file.write("Advanced copy:\n")
             for _ in range(len(ADVANCED_COPY)):
                 midas_file.write(f' {NUM}: "{ADVANCED_COPY[_][0]}:{ADVANCED_COPY[_][1]}"\n')
                 NUM+=1
