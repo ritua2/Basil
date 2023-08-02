@@ -27,6 +27,19 @@ if [[ $1 == "-b" ]]; then
 
     # If running on wetty, then upload the project to build server
     if [[ $is_wetty == true ]]; then
+
+        # ask if user want to upload to dockerhub
+        read -p "Would you like to upload built docker image to DockerHub? (yes/no): " upload_dockerhub
+
+        dockerhub_username=""
+        dockerhub_token=""
+        # ask for username and token if they want to upload to their dockerhub account or let them know by default it will be uploaded to our dockerhub
+        echo "Please note that by default, the built docker image will be uploaded to our DockerHub account."
+        echo "If you would like to upload to your DockerHub account, please enter your username and token below."
+        if [[ $upload_dockerhub == "yes" ]]; then
+            read -p "Enter your DockerHub username: " dockerhub_username
+            read -p "Enter your DockerHub token: " dockerhub_token
+        fi
         
         # echo "Uploading the project to build server..."
         curl --location "http://$GS:5000/api/instance/sync_files" \
@@ -43,6 +56,9 @@ if [[ $1 == "-b" ]]; then
                 --data '{
                     "key":"'"$orchestra_KEY"'",
                     "project_dir":"'"home/gib/$PWD"'",
+                    "docker_uid":"'"$dockerhub_username"'",
+                    "docker_token":"'"$dockerhub_token"'"
+                    "publish": "'"$upload_dockerhub"'"
                 }
                 '
 
