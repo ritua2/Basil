@@ -75,6 +75,67 @@ def main():
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             CONTENTS.append((CONTENT_SRC, CONTENT_DEST))
+    
+
+    ADVANCED_COPY = []
+    print(">>> ADVANCED COPY: Enter the contents that you want to package with the docker file. Press ENTER to skip when you don't have anything more to enter ...")
+    note = """
+        Advanced way to copy files to Docker image
+        - Web File Downloads: Download files directly from the web and add them to your Docker images.
+        - Flexible Copy Operations: Copy files and folders based on specific patterns to defined locations within your Docker images.
+        - Simple Decompression: Easily decompress tar files without any manual effort.
+        Examples:
+            1. Web File Download:
+                https://example.com/sample-file.txt:/path/to/destination/sample-file.txt
+            2. Copy Files using Regex Matches:
+                myapp-*.js:/app/
+            3. Simplified Decompression of Tar Files:
+                myapp.tar.gz:/destination/folder/
+    """
+    print(note)
+    while True:
+        CONTENT_SRC = input_(f"[{len(ADVANCED_COPY)+1}]: INPUT SOURCE FILE: ")
+        if(CONTENT_SRC==""):
+            print()
+            break
+
+        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: INPUT DESTINATION FILE PATH INSIDE IMAGE: ")
+
+        confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            ADVANCED_COPY.append((CONTENT_SRC, CONTENT_DEST))
+    
+
+    VOLUMES = []
+    print(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
+    note = """
+        Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates. 
+    """
+    print(note)
+    while True:
+        VOLUME = input_(f"[{len(VOLUMES)+1}]: ")
+        if(VOLUME==""):
+            print()
+            break
+        confirmation = input_(f"Do you want to add volume '{VOLUME}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            VOLUMES.append(VOLUME)
+    
+    EXPOSE_PORTS = []
+    print(">>> Enter the ports that you want to expose. Press ENTER to skip when you don't have anything more to enter ...")
+    note = """
+        Expose ports will expose the ports to the host machine. For example if you provide "8080", the port 8080 will be exposed to the host machine and you can access the application running inside the docker container from your host machine.
+    """
+    print(note)
+    while True:
+        PORT = input_(f"[{len(EXPOSE_PORTS)+1}]: ")
+        if(PORT==""):
+            print()
+            break
+        confirmation = input_(f"Do you want to expose port '{PORT}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            EXPOSE_PORTS.append(PORT)
+
 
     PACKAGES = []
     print(">>> Enter the packages that you want to install. Press ENTER to skip when you don't have anything more to enter ...")
@@ -126,6 +187,24 @@ def main():
             midas_file.write("Contents:\n")
             for _ in range(len(CONTENTS)):
                 midas_file.write(f' {NUM}: "{CONTENTS[_][0]}:{CONTENTS[_][1]}"\n')
+                NUM+=1
+        
+        if len(ADVANCED_COPY) > 0:
+            midas_file.write("Advanced copy:\n")
+            for _ in range(len(ADVANCED_COPY)):
+                midas_file.write(f' {NUM}: "{ADVANCED_COPY[_][0]}:{ADVANCED_COPY[_][1]}"\n')
+                NUM+=1
+        
+        if len(VOLUMES) > 0:
+            midas_file.write("Volumes:\n")
+            for _ in range(len(VOLUMES)):
+                midas_file.write(f' {NUM}: "{VOLUMES[_]}"\n')
+                NUM+=1
+        
+        if len(EXPOSE_PORTS) > 0:
+            midas_file.write("Expose ports:\n")
+            for _ in range(len(EXPOSE_PORTS)):
+                midas_file.write(f' {NUM}: "{EXPOSE_PORTS[_]}"\n')
                 NUM+=1
 
         if len(PACKAGES) + len(SETUP_CMDS)> 0 :
