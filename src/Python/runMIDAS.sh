@@ -51,8 +51,8 @@ if [[ $1 == "-b" ]]; then
 
         dirname=$(basename "$PWD")
 
-        curl --location 'http://$GS:5000/api/greyfish/users/sanjeeth/run_midas' \
-                --header 'Content-Type: application/json' \
+        curl --location "http://$GS:5000/api/greyfish/users/sanjeeth/run_midas" \
+                --header "Content-Type: application/json" \
                 --data '{
                     "key":"'"$orchestra_KEY"'",
                     "project_dir":"'"home/gib/$PWD"'",
