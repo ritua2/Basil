@@ -2,19 +2,22 @@
 
 factorial() {
   if [ "$1" -eq 0 ]; then
-    return 1
+    echo 1
   else
-    return $(($1 * factorial $1 - 1))
+    local prev=$(factorial $(($1 - 1)))
+    echo $(($1 * prev))
   fi
 }
 
 fibonacci() {
   if [ "$1" -eq 0 ]; then
-    return 0
+    echo 0
   elif [ "$1" -eq 1 ]; then
-    return 1
+    echo 1
   else
-    return $(fibonacci $(($1 - 1)) + fibonacci $(($1 - 2)))
+    local prev1=$(fibonacci $(($1 - 1)))
+    local prev2=$(fibonacci $(($1 - 2)))
+    echo $(($prev1 + $prev2))
   fi
 }
 
