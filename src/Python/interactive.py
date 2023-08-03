@@ -166,7 +166,7 @@ def main():
 
     DEFAULT = input_("Enter the default command:")
 
-    with open('midas.yml','w') as midas_file:
+    with open('midas.yml','w+') as midas_file:
         # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
         midas_file.write(f"Base: \"{BASE_IMAGE}\"\n")
 

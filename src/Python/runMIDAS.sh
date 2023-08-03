@@ -8,11 +8,11 @@ python3 $script_dir/interactive.py
 
 # CHECK IF ABOVE COMMAND EXITED WITH ERROR CODE
 if [ $? -eq 1 ]; then
-    echo "\nERROR: Exiting MIDAS..."
+    echo "ERROR: Exiting MIDAS..."
     exit 1
 fi
 
-echo "\nGenerating Dockerfile..."
+echo "Generating Dockerfile..."
 
 # Step 1
 python3 $script_dir/MIDAS.py
@@ -44,23 +44,24 @@ if [[ $1 == "-b" ]]; then
         # echo "Uploading the project to build server..."
         curl --location "http://$GS:5000/api/instance/sync_files" \
         --header "Content-Type: application/json" \
-        --data '{
-            "key": "'"$orchestra_key"'",
-            "username": "'"$USER"'"
-        }'
+        --data "{
+            \"key\": \"$orchestra_key\",
+            \"username\": \"$USER\"
+        }"
+
 
         dirname=$(basename "$PWD")
 
         curl --location "http://$GS:5000/api/greyfish/users/sanjeeth/run_midas" \
-                --header "Content-Type: application/json" \
-                --data '{
-                    "key":"'"$orchestra_KEY"'",
-                    "project_dir":"'"home/gib/$PWD"'",
-                    "docker_uid":"'"$dockerhub_username"'",
-                    "docker_token":"'"$dockerhub_token"'"
-                    "publish": "'"$upload_dockerhub"'"
-                }
-                '
+        --header "Content-Type: application/json" \
+        --data "{
+            \"key\": \"$orchestra_key\",
+            \"project_dir\": \"home/gib/$PWD\",
+            \"docker_uid\": \"$dockerhub_username\",
+            \"docker_token\": \"$dockerhub_token\",
+            \"publish\": \"$upload_dockerhub\"
+        }"
+
 
         echo "Build job is submitted. Please check your email for the results."
 
