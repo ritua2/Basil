@@ -1,0 +1,11 @@
+Base: "ubuntu:23.10"
+Working directory:
+ 1: "/"
+Contents:
+ 2: "test.sh:/test.sh"
+Setup:
+ 3: "apt-get update"
+ 4: "apt install -y bash"
+ 5: "chmod +x /test.sh"
+Entry command: /bin/bash /test.sh
+Default command: factorial(5)
