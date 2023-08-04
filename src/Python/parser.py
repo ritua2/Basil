@@ -142,13 +142,9 @@ def df_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def df_env(envar_instruction):
+    env_broken = envar_instruction.split(":")
+    return "ENV "+env_broken[0]+" "+env_broken[1]
 
-    A = ""
-
-    for varname in envar_instruction:
-        A += "ENV "+varname+" "+ str(envar_instruction[varname])+"\n"
-
-    return A
 
 
 
