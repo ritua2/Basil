@@ -177,7 +177,7 @@ def main():
             NUM+=1
 
         if len(ENV_VARIABLES) > 0:
-            midas_file.write("Environmental variables:\n")
+            midas_file.write("Environment variables:\n")
             for _ in range(len(ENV_VARIABLES)):
                 midas_file.write(f' {NUM}:\n')
                 midas_file.write(f'  {ENV_VARIABLES[_][0]}: {ENV_VARIABLES[_][1]}\n')

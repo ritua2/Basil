@@ -21,7 +21,7 @@ def parse_commands(filepath):
 # Requires the data in dictionary form
 def provided_instructions(raw_data):
 
-    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environmental variables", "Default command", "Entry command", "Expose ports", "Volumes", "Advanced copy"]
+    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environment variables", "Default command", "Entry command", "Expose ports", "Volumes", "Advanced copy"]
 
     return [key for key in raw_data if key in valid_tags]
 
@@ -134,7 +134,7 @@ def df_copy(copy_instruction):
 
     copy_broken = copy_instruction.split(":")
     if len(copy_broken) == 1:
-        return "COPY "+copy_instruction+" ."
+        return "COPY "+copy_broken[0]+" ."
     else:
         return "COPY "+copy_broken[0]+" "+copy_broken[1]
 
@@ -202,7 +202,7 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                 dfp.write(df_run(an_instruction[1], spacing)+"\n")
             elif an_instruction[2] == "Contents":
                 dfp.write(df_copy(an_instruction[1])+"\n")
-            elif an_instruction[2] == "Environmental variables":
+            elif an_instruction[2] == "Environment variables":
                 dfp.write(df_env(an_instruction[1])+"\n")
             elif an_instruction[2] == "Expose ports":
                 dfp.write(df_expose(an_instruction[1])+"\n")
