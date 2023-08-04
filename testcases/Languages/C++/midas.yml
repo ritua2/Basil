@@ -1,0 +1,21 @@
+Base: "debian:stable"
+Working directory:
+ 1: "/"
+
+
+Contents:
+ 2:
+  test.cpp .
+
+
+
+Setup:
+ 3:
+  apt-get update
+ 4:
+  apt-get install -y g++
+ 5:
+  rm -rf /var/lib/apt/lists/*
+ 6:
+  g++ -o test test.cpp
+Default command: "./test"
