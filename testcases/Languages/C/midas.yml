@@ -1,0 +1,19 @@
+Base: "ubuntu:23.10"
+Working directory:
+ 1: "/"
+
+
+Contents:
+ 2:
+  test.c .
+
+
+
+Setup:
+ 3:
+  apt-get update
+ 4:
+  apt-get install -y gcc
+ 5:
+  gcc -o test test.c
+Default command: "./test"
