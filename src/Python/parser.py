@@ -169,13 +169,10 @@ def df_volume(volume_instruction):
     return "VOLUME "+ str(volume_instruction)
 
 def df_acopy(acopy_instruction):
-    copy_broken = str(acopy_instruction).split(":")
-    if len(copy_broken) == 1:
-        return "ADD " + acopy_instruction+" ."
-    else:
+    copy_broken = str(acopy_instruction).split("<::>")
+    if len(copy_broken) == 2:
         return "ADD "+copy_broken[0]+" "+copy_broken[1]
-
-
+    return ""
     
 
 
