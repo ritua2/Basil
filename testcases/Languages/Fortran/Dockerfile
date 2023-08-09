@@ -1,4 +1,4 @@
-FROM ubuntu:kinetic
+FROM ubuntu:23.10
 
 WORKDIR /
 COPY test.f90 /test.f90
