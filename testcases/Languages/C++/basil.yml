@@ -1,0 +1,10 @@
+Base: "debian:stable-backports"
+Working directory:
+ 1: "/"
+Contents:
+ 2: "test.cpp:/test.cpp"
+Setup:
+ 3: "apt-get update"
+ 4: "apt install -y g++"
+ 5: "g++ -o test test.cpp"
+Default command: ./test
