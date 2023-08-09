@@ -1,0 +1,11 @@
+Base: "alpine:edge"
+Working directory:
+ 1: "/"
+Contents:
+ 2: "test.java:/test.java"
+Setup:
+ 3: "apk update"
+ 4: "apk add openjdk11"
+ 5: "apk add openjdk11-jre"
+ 6: "javac test.java"
+Default command: java test
