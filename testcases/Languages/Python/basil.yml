@@ -1,0 +1,9 @@
+Base: "python:3.12.0b4-slim-bullseye"
+
+Working directory:
+ 1: "/"
+ 
+Contents:
+ 2: "simple.py:/simple.py"
+ 
+Default command: python simple.py
