@@ -1,0 +1,16 @@
+Base: "python:3.12-rc"
+
+Working directory:
+ 1: "/"
+ 
+Contents:
+ 2: "testpwf.py:/testpwf.py"
+ 
+Expose ports:
+ 3: "5000"
+ 
+Setup:
+ 4: "apt-get update"
+ 5: "pip install Flask"
+ 
+Default command: python testpwf.py
