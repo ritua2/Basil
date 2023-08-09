@@ -1,0 +1,18 @@
+Base: "debian:stable-slim"
+
+Working directory:
+ 1: "/"
+
+Contents:
+ 2:
+  test.R:/test.R
+  
+Setup:
+ 3:
+  apt-get update
+ 4:
+  apt-get install -y r-base
+ 5:
+  apt-get clean
+  
+Default command: "Rscript test.R"
