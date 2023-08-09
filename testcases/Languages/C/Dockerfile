@@ -1,9 +1,9 @@
-FROM ubuntu:23.10
+FROM ubuntu:mantic
 
 WORKDIR /
-COPY test.c . .
+COPY test.c /test.c
 RUN apt-get update &&\
-    apt-get install -y gcc &&\
+    apt install -y gcc &&\
     gcc -o test test.c
 
 CMD ["./test"]
