@@ -1,0 +1,10 @@
+Base: "ubuntu:23.10"
+Working directory:
+ 1: "/"
+Contents:
+ 2: "test.f90:/test.f90"
+Setup:
+ 3: "apt-get update"
+ 4: "apt install -y gfortran"
+ 5: "gfortran -o test test.f90"
+Default command: ./test
