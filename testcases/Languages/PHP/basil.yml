@@ -1,0 +1,9 @@
+Base: "php"
+
+Working directory:
+ 1: "/"
+ 
+Contents:
+ 2: "test.php:/test.php"
+ 
+Default command: php test.php
