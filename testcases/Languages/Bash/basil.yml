@@ -1,0 +1,10 @@
+Base: "alpine:edge"
+Working directory:
+ 1: "/"
+Contents:
+ 2: "test.sh:/test.sh"
+Setup:
+ 3: "apk update"
+ 4: "apk add bash"
+ 5: "chmod +x /test.sh"
+Default command: /bin/bash /test.sh
