@@ -25,7 +25,7 @@ For Linux:
 
 #1 INSTRUCTIONS FOR RUNNING DOCKER IMAGE ON SYSTEM OF CHOICE:
 
-CASE 1: Pushed the image to Docker Hub account by providing 'Username' and 'Access Token':-
+Case 1: Pushed the image to Docker Hub account by providing 'Username' and 'Access Token':-
 
 Step 1: Login to your Docker Hub account and locate the image that was pushed after generating the Dockerfile through Basil, and click on it.
 Step 2: Click on 'Public View' and go to the 'Tags' banner button. You should see a 'docker pull [image name]' command there, copy the whole command.
@@ -33,7 +33,7 @@ Step 3: Paste the command in a terminal session and hit enter, it should pull th
 Step 4: Run the 'docker image ls' command and copy the image ID of the image you just pulled.
 Step 5: Finally, run this command, 'docker run [image ID here]' and it should run your image and perform the task it was programmed to do.
 
-CASE 2: Pushed the image to Docker Hub account but did NOT provide 'Username' and 'Access Token':-
+Case 2: Pushed the image to Docker Hub account but did NOT provide 'Username' and 'Access Token':-
 
 Step 1:  Go to https://hub.docker.com/ and type 'basilproject' in the search bar located in the top left part of the website. You do not need to have a Docker Hub account to perform this action.
 Step 2: Locate the image that was pushed here, the image name should have your username in it to make it easier to identify.
@@ -41,7 +41,7 @@ Step 3: Copy the 'Docker Pull Command' provided on the webpage and paste it into
 Step 4: Once the pull has completed, run the 'docker image ls' command and copy the image ID for your pulled image
 Step 5: Finally, run 'docker run [image ID]' command and it should run your image.
 
-CASE 3: Did not push the image to Docker Hub:-
+Case 3: Did not push the image to Docker Hub:-
 
 Step 1: Check your email, you should have an email from 'icomputeus@gmail.com'. It should have a link to download the file as well as instructions on how to run it, they are also provided here.
 Step2: Click the link to download the file, once the file has downloaded, open terminal and navigate to the folder where the .tar.gz file is located.
@@ -58,6 +58,14 @@ Step 4: Copy the contents and save them to a file named 'Dockerfile' in the same
 Step 5: Open a terminal tab from this location (or open from anywhere and navigate to this directory), and run 'docker build .' command. [THERE SHOULD ONLY BE 1 DOCKERFILE IN YOUR DIRECTORY]
 Step 6: Once built, run 'docker image ls' to find the image ID of the newly built image and copy it.
 Step 7: To run this image, type 'docker run [image ID]'.
+
+#3 INSTRUCTIONS FOR RUNNING THE IMAGE ON HPC SYSTEMS USING SINGULARITY:
+
+Step 1: Ensure you have Singularity installed on your system by running 'singularity --version', if you do not, install Singularity by following the instructions here https://docs.sylabs.io/guides/3.7/admin-guide/installation.html
+Step 2: Use the following command to pull an image from Docker Hub and convert it into Singularity Image Format (SIF) file.
+        'singularity pull [image name].sif docker://[docker image name]:[tag]' # remove [] in actual use...
+Step 3: Run the Singularity image by using this command
+        'singularity run [image name].sif'
 
 NOTE: If you already have the image, you may not need to rebuild it. You can confirm if the image is available on your system by running the 'docker image ls' command in terminal. 
 
