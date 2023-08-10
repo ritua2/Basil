@@ -1,8 +1,8 @@
 Building and Running a Docker Image after generating a Dockerfile through Basil
 
-This guide will walk you through the process of building a Docker image using the provided Dockerfile and then running a container from that image on Windows, Linux, and macOS systems.
+This guide will walk you through the process of running the Docker Image, or use the provided Dockerfile to build the image yourselves on Windows, Linux, and macOS systems.
 
-Prerequisites
+Prerequisites:-
 
 Before we get started, ensure that you have Docker installed on your system. If you do not, then follow the steps below:
 
