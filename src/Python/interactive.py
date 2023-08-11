@@ -1,9 +1,12 @@
 #!/usr/bin/python
+import os
+import re
+
 def input_(prompt):
-    return input("\n"+prompt+" ")
+    return input("\n" + prompt + " ")
 
 def main():
-    print("INTERACTIVE MODE: MIDAS\n")
+    print("\nINTERACTIVE MODE: MIDAS\n")
     images_and_package_manager = [
         ("ubuntu:23.10", "apt"),
         ("ubuntu:kinetic", "apt"),
@@ -23,7 +26,7 @@ def main():
         ("nginx:mainline-perl", "apt"),
         ("python:3.12-rc", "apt"),
         ("python:3.12.0b4-slim-bullseye", "apt"),
-        ("python:3.12.0b3-slim"),
+        ("python:3.12.0b3-slim", "apt"),
         ("graphcore/tensorflow", "apt"),
         ("graphcore/tensorflow:2", "apt"),
         ("graphcore/pytorch:3.3.0-ubuntu-20.04-20230703", "apt"),
@@ -40,7 +43,6 @@ def main():
         print(f"{index}. {image_and_pkg_manager[0]}")
 
     selection = input_(">>> Please select the base image by entering its number: ")
-
 
     while not selection.isdigit() or not 1 <= int(selection) <= len(images_and_package_manager):
         print("INVALID SELECTION. PLEASE PROVIDE THE INPUT AGAIN.\n")
@@ -75,8 +77,7 @@ def main():
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             CONTENTS.append((CONTENT_SRC, CONTENT_DEST))
-    
-
+        
     ADVANCED_COPY = []
     print(">>> ADVANCED COPY: Enter the contents that you want to package with the docker file. Press ENTER to skip when you don't have anything more to enter ...")
     note = """
@@ -104,12 +105,11 @@ def main():
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             ADVANCED_COPY.append((CONTENT_SRC, CONTENT_DEST))
-    
 
     VOLUMES = []
     print(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
     note = """
-        Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates. 
+        Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates.
     """
     print(note)
     while True:
@@ -120,7 +120,7 @@ def main():
         confirmation = input_(f"Do you want to add volume '{VOLUME}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             VOLUMES.append(VOLUME)
-    
+
     EXPOSE_PORTS = []
     print(">>> Enter the ports that you want to expose. Press ENTER to skip when you don't have anything more to enter ...")
     note = """
@@ -135,7 +135,6 @@ def main():
         confirmation = input_(f"Do you want to expose port '{PORT}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             EXPOSE_PORTS.append(PORT)
-
 
     PACKAGES = []
     print(">>> Enter the packages that you want to install. Press ENTER to skip when you don't have anything more to enter ...")
@@ -166,6 +165,43 @@ def main():
 
     DEFAULT = input_("Enter the default command:")
 
+    # license work
+    def load_license_files(license_directory):
+        licenses = []
+        for filename in os.listdir(license_directory):
+            if filename.endswith(".txt"):
+                with open(os.path.join(license_directory, filename), 'rb') as file:
+                    licenses.append((filename[:-4], file.read().decode('utf-8'), os.path.join(license_directory, filename)))
+        return licenses
+
+    # license_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../licenses")
+    script_directory = os.path.dirname(os.path.abspath(__file__))
+    license_directory = os.path.join(script_directory, "licenses")
+    license_list = load_license_files(license_directory)
+
+    def license_yes_no(prompt):
+        response = input(prompt + " [y/n] ").strip().lower()
+        return response == 'y' or response == 'yes'
+
+    include_license = license_yes_no("Would you like to include a license?")
+
+    if include_license:
+        print("Available licenses: ")
+        for index, (license_name, _, _) in enumerate(license_list, start=1):
+            print(f"{index}. {license_name}")
+
+        selection = input_(">>> Please select a license by entering its number: ")
+
+        while not selection.isdigit() or not 1 <= int(selection) <= len(license_list):
+            print("INVALID selection. Please provide the input again...\n")
+            selection = input_(">>> Please select a license by entering its number: ")
+
+        selected_license_name, selected_license_text, _ = license_list[int(selection) - 1]
+
+        CONTENTS.append((selected_license_name, f"licenses/{selected_license_name}.txt"))
+
+    # end license work
+
     with open('midas.yml','w+') as midas_file:
         # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
         midas_file.write(f"Base: \"{BASE_IMAGE}\"\n")
@@ -188,19 +224,20 @@ def main():
             for _ in range(len(CONTENTS)):
                 midas_file.write(f' {NUM}: "{CONTENTS[_][0]}:{CONTENTS[_][1]}"\n')
                 NUM+=1
-        
+            
+
         if len(ADVANCED_COPY) > 0:
             midas_file.write("Advanced copy:\n")
             for _ in range(len(ADVANCED_COPY)):
                 midas_file.write(f' {NUM}: "{ADVANCED_COPY[_][0]}<::>{ADVANCED_COPY[_][1]}"\n')
                 NUM+=1
-        
+
         if len(VOLUMES) > 0:
             midas_file.write("Volumes:\n")
             for _ in range(len(VOLUMES)):
                 midas_file.write(f' {NUM}: "{VOLUMES[_]}"\n')
                 NUM+=1
-        
+
         if len(EXPOSE_PORTS) > 0:
             midas_file.write("Expose ports:\n")
             for _ in range(len(EXPOSE_PORTS)):
