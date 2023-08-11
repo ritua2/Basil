@@ -1,4 +1,4 @@
-#to be tested
+#stable
 #!/usr/bin/python
 import os
 import re
@@ -199,12 +199,7 @@ def main():
 
         selected_license_name, selected_license_text, _ = license_list[int(selection) - 1]
 
-        selected_license_path = os.path.join(license_directory, f"{selected_license_name}.txt")
-        user_license_path = os.path.expanduser("~/LICENSE.txt")
-        with open(selected_license_path, 'rb') as source_file, open(user_license_path, 'wb') as dest_file:
-            dest_file.write(source_file.read())
-
-        CONTENTS.append(("LICENSE.txt", "LICENSE"))
+        CONTENTS.append((selected_license_name, f"licenses/{selected_license_name}.txt"))
 
     # end license work
 
