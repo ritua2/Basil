@@ -1,3 +1,4 @@
+#to be tested
 #!/usr/bin/python
 import os
 import re
@@ -77,7 +78,7 @@ def main():
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             CONTENTS.append((CONTENT_SRC, CONTENT_DEST))
-        
+
     ADVANCED_COPY = []
     print(">>> ADVANCED COPY: Enter the contents that you want to package with the docker file. Press ENTER to skip when you don't have anything more to enter ...")
     note = """
@@ -176,7 +177,7 @@ def main():
 
     # license_directory = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../licenses")
     script_directory = os.path.dirname(os.path.abspath(__file__))
-    license_directory = os.path.join(script_directory, "licenses")
+    license_directory = os.path.join(script_directory, "../licenses")
     license_list = load_license_files(license_directory)
 
     def license_yes_no(prompt):
@@ -198,7 +199,12 @@ def main():
 
         selected_license_name, selected_license_text, _ = license_list[int(selection) - 1]
 
-        CONTENTS.append((selected_license_name, f"licenses/{selected_license_name}.txt"))
+        selected_license_path = os.path.join(license_directory, f"{selected_license_name}.txt")
+        user_license_path = os.path.expanduser("~/LICENSE.txt")
+        with open(selected_license_path, 'rb') as source_file, open(user_license_path, 'wb') as dest_file:
+            dest_file.write(source_file.read())
+
+        CONTENTS.append(("LICENSE.txt", "LICENSE"))
 
     # end license work
 
@@ -224,7 +230,7 @@ def main():
             for _ in range(len(CONTENTS)):
                 midas_file.write(f' {NUM}: "{CONTENTS[_][0]}:{CONTENTS[_][1]}"\n')
                 NUM+=1
-            
+
 
         if len(ADVANCED_COPY) > 0:
             midas_file.write("Advanced copy:\n")
