@@ -1,5 +1,5 @@
 Eclipse Public License 1.0
-{{%full name%}}
+full name
 Eclipse Public License 1.0
 
 Short identifier
