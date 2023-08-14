@@ -1,5 +1,5 @@
 BSD 2-Clause "Simplified" License
-{{%full name%}}
+full name
 BSD 2-Clause "Simplified" License
 
 Short identifier
