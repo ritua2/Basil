@@ -1,5 +1,5 @@
 Reciprocal Public License 1.5
-{{%full name%}}
+full name
 Reciprocal Public License 1.5
 
 Short identifier
