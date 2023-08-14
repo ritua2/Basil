@@ -1,5 +1,5 @@
 European Union Public License 1.1
-{{%full name%}}
+full name
 European Union Public License 1.1
 
 Short identifier
