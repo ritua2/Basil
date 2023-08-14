@@ -1,5 +1,5 @@
 GNU Lesser General Public License v2.1 only
-{{%full name%}}
+full name
 GNU Lesser General Public License v2.1 only
 
 Short identifier
