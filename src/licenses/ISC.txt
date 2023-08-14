@@ -1,5 +1,5 @@
 ISC License
-{{%full name%}}
+full name
 ISC License
 
 Short identifier
