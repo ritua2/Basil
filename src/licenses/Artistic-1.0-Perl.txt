@@ -1,5 +1,5 @@
 Artistic License 1.0 (Perl)
-{{%full name%}}
+full name
 Artistic License 1.0 (Perl)
 
 Short identifier
