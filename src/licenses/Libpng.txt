@@ -1,5 +1,5 @@
 libpng License
-{{%full name%}}
+full name
 libpng License
 
 Short identifier
