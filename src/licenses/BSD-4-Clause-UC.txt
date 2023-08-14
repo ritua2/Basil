@@ -1,5 +1,5 @@
 BSD-4-Clause (University of California-Specific)
-{{%full name%}}
+full name
 BSD-4-Clause (University of California-Specific)
 
 Short identifier
