@@ -1,5 +1,5 @@
 Eiffel Forum License v2.0
-{{%full name%}}
+full name
 Eiffel Forum License v2.0
 
 Short identifier
