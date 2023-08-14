@@ -63,16 +63,16 @@ if [[ $1 == "-b" ]]; then
 
         
         # echo "Uploading the project to build server..."
-        output = curl --location "http://$GS:5000/api/instance/sync_files" \
+        output=$(curl --location "http://$GS:5000/api/instance/sync_files" \
         --header "Content-Type: application/json" \
         --data "{
             \"key\": \"$orchestra_key\",
             \"username\": \"$USER\"
-        }"
+        }")
 
         dirname=$(basename "$PWD")
 
-        output = curl --location "http://$GS:5000/api/greyfish/users/$USER/run_midas" \
+        output=$(curl --location "http://$GS:5000/api/greyfish/users/$USER/run_midas" \
         --header "Content-Type: application/json" \
         --data "{
             \"key\": \"$orchestra_key\",
@@ -80,7 +80,7 @@ if [[ $1 == "-b" ]]; then
             \"docker_uid\": \"$dockerhub_username\",
             \"docker_token\": \"$dockerhub_token\",
             \"publish\": \"$upload_dockerhub\"
-        }"
+        }")
 
 
         echo "Build job is submitted. Please check your email for the results."
