@@ -1,5 +1,5 @@
 Academic Free License v2.1
-{{%full name%}}
+full name
 Academic Free License v2.1
 
 Short identifier
