@@ -1,5 +1,5 @@
 IBM Public License v1.0
-{{%full name%}}
+full name
 IBM Public License v1.0
 
 Short identifier
