@@ -1,5 +1,5 @@
 Universal Permissive License v1.0
-{{%full name%}}
+full name
 Universal Permissive License v1.0
 
 Short identifier
