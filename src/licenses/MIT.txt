@@ -1,5 +1,5 @@
 MIT License
-{{%full name%}}
+full name
 MIT License
 
 Short identifier
