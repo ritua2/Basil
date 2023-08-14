@@ -1,5 +1,5 @@
 Common Development and Distribution License 1.0
-{{%full name%}}
+full name
 Common Development and Distribution License 1.0
 
 Short identifier
