@@ -1,5 +1,5 @@
 Apache License 1.0
-{{%full name%}}
+full name
 Apache License 1.0
 
 Short identifier
