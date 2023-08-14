@@ -1,5 +1,5 @@
 Open Software License 3.0
-{{%full name%}}
+full name
 Open Software License 3.0
 
 Short identifier
