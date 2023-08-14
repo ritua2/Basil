@@ -1,5 +1,5 @@
 GNU General Public License v3.0 only
-{{%full name%}}
+full name
 GNU General Public License v3.0 only
 
 Short identifier
