@@ -1,5 +1,5 @@
 Common Public License 1.0
-{{%full name%}}
+full name
 Common Public License 1.0
 
 Short identifier
