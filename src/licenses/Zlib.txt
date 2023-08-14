@@ -1,5 +1,5 @@
 zlib License
-{{%full name%}}
+full name
 zlib License
 
 Short identifier
