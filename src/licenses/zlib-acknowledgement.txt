@@ -1,5 +1,5 @@
 zlib/libpng License with Acknowledgement
-Full name
+full name
 zlib/libpng License with Acknowledgement
 
 Short identifier
