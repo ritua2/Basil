@@ -1,5 +1,5 @@
 BSD 3-Clause "New" or "Revised" License
-{{%full name%}}
+full name
 BSD 3-Clause "New" or "Revised" License
 
 Short identifier
