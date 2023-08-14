@@ -1,5 +1,5 @@
 GNU Affero General Public License v3.0 or later
-{{%full name%}}
+full name
 GNU Affero General Public License v3.0 or later
 
 Short identifier
