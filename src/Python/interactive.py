@@ -224,15 +224,24 @@ def main():
     print(">>> Select a license for your project. Select last option if you don't want to add any license.")
     for i, license in enumerate(licenses):
         print(f"[{i}]: {license[0]}")
-    print(f"[{len(licenses)}]: No license")
+    else:
+        print(f"[{len(licenses)}]: No license")
+
     while True:
         try:
-            license_number = int(input_(f"[1]: "))
+            license_number = int(input_(f"[1]: Enter the license number: "))
+            if license_number == len(licenses):
+                confirmation = input_("Are you sure you do not want to add a license? [Y/n]\n")
+                if confirmation.lower() != 'n' and confirmation.lower() != 'no':
+                    LICENSE = ""
+                    break
+                else:
+                    continue
+
             LICENSE = licenses[license_number][1]
 
             confirmation = input_(f"Do you want to add license '{LICENSE}'? [Y/n]\n")
-            if confirmation.lower() != 'n' or confirmation.lower() != 'no':
-                # fill the placeholders
+            if confirmation.strip().lower() != "n" and confirmation.strip().lower() != "no":
                 for placeholder in licenses[license_number][2]:
                     placeholders[placeholder] = input_(f"Enter the {placeholder}: ")
                 break
