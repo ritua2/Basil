@@ -58,8 +58,6 @@ if [[ $1 == "-b" ]]; then
                 dockerhub_username="basilproject"
                 dockerhub_token="default_token"
             fi
-            echo $dockerhub_username
-            echo $dockerhub_token
         fi
 
 
