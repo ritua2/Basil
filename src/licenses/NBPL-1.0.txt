@@ -1,5 +1,5 @@
 Net Boolean Public License v1
-{{%full name%}}
+full name
 Net Boolean Public License v1
 
 Short identifier
