@@ -1,4 +1,3 @@
-#to be tested
 #!/usr/bin/python
 import os
 import re
@@ -206,7 +205,6 @@ def main():
 
         CONTENTS.append(("LICENSE.txt", "LICENSE"))
 
-    # end license work
 
     with open('midas.yml','w+') as midas_file:
         # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
