@@ -36,6 +36,9 @@ def main():
         ("php:zts", "apt"),
         ("alpine:3.16.6", "apk"),
         ("alpine:edge", "apk"),
+        ("centos:centos8", "yum"),
+        ("centos:centos7", "yum"),
+        ("centos:centos6", "yum"),
     ]
 
     print("Available set of base images for MIDAS: ")
