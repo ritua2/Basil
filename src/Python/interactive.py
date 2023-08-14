@@ -219,6 +219,58 @@ def main():
             "copyright holder": "license_copyright_holder",
             "copyright notice": "license_copyright_notice"
         }
+    """
+    <label for="name">Please enter the name of the individual/entity responsible for creating the software: </label>
+
+ 
+
+                          <label for="year">Please enter the year of creation/publication of software: </label>
+
+ 
+
+                          <label for="owner">Please enter the name of the individual/organization that legally owns the software: </label>
+
+ 
+
+                          <label for="language_type">Please enter the programming language(s) used in the software: </label>
+
+ 
+
+                          <label for="program_info">Please enter any important information/description regarding the software: </label>
+
+ 
+
+                          <label for="designation">Please enter the role of the person representing the copyright holder: </label>
+
+ 
+
+                          <label for="date">Please enter the date on which the license agreement was signed or comes into effect: </label>
+
+ 
+
+                          <label for="signature">Please enter the name or initials of the copyright holder: </label>
+
+ 
+
+                          <label for="copyright_notice">Please enter the statement that will be used to indicate that the software is protected by copyright law: </label>
+
+ 
+
+                          <label for="copyright_holder">Please enter the name of the person/entity that owns the legal copyright for the software: </label>
+    """
+    placeholder_desc = {
+        "name": "Please enter the name of the individual/entity responsible for creating the software: ",
+        "year": "Please enter the year of creation/publication of software: ",
+        "owner": "Please enter the name of the individual/organization that legally owns the software: ",
+        "language type": "Please enter the programming language(s) used in the software: ",
+        "program info": "Please enter any important information/description regarding the software: ",
+        "designation": "Please enter the role of the person representing the copyright holder: ",
+        "date": "Please enter the date on which the license agreement was signed or comes into effect: ",
+        "signature": "Please enter the name or initials of the author: ",
+        "copyright notice": "Please enter the statement that will be used to indicate that the software is protected by copyright law:",
+        "copyright holder": "Please enter the name of the person/entity that owns the legal rights for the software: "
+    }
+
     
     # provide list of licenses to choose from. Provide extra option in the last for no license.
     print(">>> Select a license for your project. Select last option if you don't want to add any license.")
@@ -243,7 +295,7 @@ def main():
             confirmation = input_(f"Do you want to add license '{LICENSE}'? [Y/n]\n")
             if confirmation.strip().lower() != "n" and confirmation.strip().lower() != "no":
                 for placeholder in licenses[license_number][2]:
-                    placeholders[placeholder] = input_(f"Enter the {placeholder}: ")
+                    placeholders[placeholder] = input_(placeholder_desc.get(placeholder, f"Please enter the {placeholder}: "))
                 break
             else:
                 continue
