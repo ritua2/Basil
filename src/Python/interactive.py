@@ -71,12 +71,12 @@ def main():
     CONTENTS = []
     print(">>> Enter the relative filepaths (including the filenames) that you want to package in the Docker image. Please note that the path should we relative to your current working directory or folder, which is likely the folder that you uploaded. Press ENTER to skip when you don't have anything more to enter. ")
     while True:
-        CONTENT_SRC = input_(f"[{len(CONTENTS)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE "SOURCE" FOR THE COPY COMMAND): ")
+        CONTENT_SRC = input_(f"[{len(CONTENTS)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
         if(CONTENT_SRC==""):
             print()
             break
 
-        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE "DESTINATION" FOR THE COPY COMMAND) ")
+        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND) ")
 
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
@@ -99,12 +99,12 @@ def main():
     """
     print(note)
     while True:
-        CONTENT_SRC = input_(f"[{len(ADVANCED_COPY)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE "SOURCE" FOR THE COPY COMMAND): ")
+        CONTENT_SRC = input_(f"[{len(ADVANCED_COPY)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
         if(CONTENT_SRC==""):
             print()
             break
 
-        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE "DESTINATION" FOR THE COPY COMMAND): ")
+        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND): ")
 
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
@@ -162,11 +162,11 @@ def main():
         confirmation = input_(f"Do you want to add command `${CMD}` to setup your project environment? [Y/n]\n")
         if confirmation.lower() != 'n':
             SETUP_CMDS.append(CMD)
-    print(">>>  There is a notion of "entry command" and a "default command". The "entry command" is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The "default command" is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the "entry command" is run. In case there is no "entry command" provided, the "default command" would be the first one to run. It should be noted that unlike the "entry command", the "default command", can be overridden at run-time by passing command-line arguments through the "docker run" command. You can choose to provide an "entry command" only, or a "default command" only, or both "entry command" and "default command". One scenario where "entry command" and "default command" are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the "entry command" and the "default command" is used as a place-holder or to pass default value to the "entry command" with the understanding that the "default command" can be overridden by passing command-line arguments at run-time using the "docker run" command.")
+    print(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
     
-    ENTRYPOINT = input_("Enter an "entry command" that should be run everytime your Docker image is run as a container (optional). ")
+    ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). ")
 
-    DEFAULT = input_("Enter a "default command" that should be run everytime your Docker image runs as a container (optional):")
+    DEFAULT = input_("Enter a 'default command' that should be run everytime your Docker image runs as a container (optional):")
 
     # list of valid licenses
     licenses = [
