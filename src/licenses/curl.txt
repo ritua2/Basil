@@ -1,5 +1,5 @@
 curl License
-{{%full name%}}
+full name
 curl License
 
 Short identifier
