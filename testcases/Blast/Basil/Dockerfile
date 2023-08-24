@@ -1,5 +1,5 @@
 # Use a base image with the necessary tools and libraries
-FROM ubuntu:latest
+FROM ubuntu:23.10
 
 # Install required packages
 RUN apt-get update && \
