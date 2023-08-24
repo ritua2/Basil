@@ -1,0 +1,40 @@
+# NAMD input configuration for a water box simulation
+
+# Input parameters
+structure         water.psf
+coordinates       water.pdb
+parameters        charmm36m.ff
+
+# Output settings
+outputName        water_simulation
+outputEnergies    1000
+restartfreq       5000
+
+# Simulation settings
+temperature       300
+timestep          2.0
+stepspercycle     20
+run               100000
+
+# PME settings for long-range electrostatics
+PME               yes
+PMEGridSpacing    1.0
+
+# Langevin dynamics for temperature control
+langevin          on
+langevintemp      300
+langevindamping   5
+langevinhydrogen  off
+
+# Constraints
+rigidBonds        all
+rigidTolerance    0.0001
+rigidIterations   400
+
+# Integrator settings
+pairlistdist      14
+cutoff            12
+switching         on
+switchdist        10
+exclude           scaled1-4
+1-4scaling        0.833333
