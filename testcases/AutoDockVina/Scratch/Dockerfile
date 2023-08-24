@@ -1,34 +1,18 @@
-# Use a base image with necessary tools and libraries
-FROM ubuntu:latest
+FROM ubuntu:kinetic
 
-# Set the working directory inside the container
-WORKDIR /autodock-vina-build
+WORKDIR /
 
-# Update the package index and install necessary dependencies
-RUN apt-get update \
-    && apt-get install -y --no-install-recommends \
-        build-essential \
-        libboost-all-dev \
-        swig \
-        git \
-        wget \
-    && rm -rf /var/lib/apt/lists/*
+COPY conf.txt /conf.txt
 
-# Clone the AutoDock Vina repository from GitHub
-RUN git config --global http.sslVerify false
-RUN git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina
+COPY ligand.pdbqt /ligand.pdbqt
 
-# Build AutoDock Vina
-RUN cd /autodock-vina \
-    && cd build/linux/release \
-    #&& cmake -DCMAKE_BUILD_TYPE=Release .. \
-    && make
+COPY protein.pdbqt /protein.pdbqt
 
-# Add the vina binary to the PATH for easy execution
-ENV PATH="/autodock-vina/build/linux/release:${PATH}"
+RUN apt-get update &&\
+    apt-get install -y build-essential &&\
+    apt-get install -y libboost-all-dev swig git &&\
+    git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina &&\
+    cd autodock-vina/build/linux/release &&\
+    make
 
-# Set the entrypoint to vina for easy execution
-ENTRYPOINT ["vina"]
-
-# Set the default command (e.g., --help) when running the container without additional arguments
-CMD ["--help"]
+CMD ["autodock-vina/build/linux/release/vina", "--config", "conf.txt"]
