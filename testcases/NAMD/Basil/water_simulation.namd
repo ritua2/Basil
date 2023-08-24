@@ -1,5 +1,3 @@
-# NAMD input configuration for a water box simulation
-
 # Input parameters
 structure         water.psf
 coordinates       water.pdb
