@@ -1,18 +1,23 @@
-FROM ubuntu:23.10
+FROM ubuntu:latest
 
-WORKDIR /autodock-vina-build
-ENV PATH /autodock-vina/build/linux/release:${PATH}
+# Update package list and install required packages
+RUN apt-get update && \
+    apt-get install -y build-essential \
+                       libboost-all-dev \
+                       git \
+                       wget \
+                       && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends &&\
-    apt-get install -y build-essential &&\
-    apt-get install -y libboost-all-dev &&\
-    apt-get install -y swig &&\
-    apt-get install -y git &&\
-    git config --global http.sslVerify false &&\
-    git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina &&\
-    cd /autodock-vina &&\
-    cd build/linux/release &&\
+# Clone AutoDock Vina repository
+RUN git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina
+
+# Build AutoDock Vina
+RUN cd /autodock-vina/build/linux/release && \
     make
 
-CMD ["vina", "--help"]
+# Set the working directory
+WORKDIR /autodock-vina/build/linux/release
+
+# Run the vina -help command
+CMD ["./vina", "-help"]
