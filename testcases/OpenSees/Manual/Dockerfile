@@ -6,15 +6,12 @@ RUN apt-get update && \
     apt-get install -y wget g++
 
 # Download and install OpenSees
-WORKDIR /root
+WORKDIR /
 RUN wget https://opensees.berkeley.edu/OpenSees/user.opensees && \
     g++ -o OpenSees user.opensees
 
 # Copy the test data file into the container
-COPY testdata.tcl /root/testdata.tcl
-
-# Set working directory
-WORKDIR /root
+COPY testdata.tcl /testdata.tcl
 
 # Run OpenSees on testdata.tcl
 CMD ["./OpenSees", "testdata.tcl"]
