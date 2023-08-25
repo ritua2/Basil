@@ -37,3 +37,7 @@ blastdbcmd -db 16S_ribosomal_RNA -entry nr_025000 -out 16S_query.fa
 
 # Run the database for verification
 blastn -db 16S_ribosomal_RNA -query 16S_query.fa -task blastn -dust no -outfmt "7 delim=, qacc sacc evalue bitscore qcovus pident" -max_target_seqs 5
+
+# Run seq.fasta and query.fasta 
+blastn -db 16S_ribosomal_RNA -query /root/seq.fasta -out blast_output_seq.fasta
+blastn -db 16S_ribosomal_RNA -query /root/query.fasta -out blast_output_query.fasta
