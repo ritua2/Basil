@@ -1,4 +1,4 @@
-# Credit for Creation: https://github.com/ncbi/docker/blob/master/blast/2.8.1/Dockerfile
+# To run other BLAST tools, replace "blastn" with "blastp", "blastx", "tblastn", etc., and adjust the parameters as needed.
 
 FROM ncbi/edirect as edirect
 FROM ubuntu:18.04 as blastbuild
@@ -55,6 +55,11 @@ RUN curl -s ftp://ftp.ncbi.nlm.nih.gov/blast/temp/${version}/blastdb_path -o /bl
     curl -s ftp://ftp.ncbi.nlm.nih.gov/blast/temp/${version}/tblastx.sh -o /blast/bin/tblastx  && chmod +x /blast/bin/tblastx
 RUN echo 'will cite' | parallel --citation
 
+# Copy your query.fasta to the Docker container
+COPY query.fasta /root/query.fasta
+COPY seq.fasta /root/seq.fasta
+
 WORKDIR /blast
 
-CMD ["/bin/bash"]
+# Run the desired BLAST commands on your query.fasta
+CMD ["bash", "-c", "blastn -query /root/query.fasta -db 16S_ribosomal_RNA -out blast_output_query.txt && blastn -query /root/seq.fasta -db 16S_ribosomal_RNA -out blast_output_seq.txt"]
