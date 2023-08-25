@@ -17,5 +17,8 @@ WORKDIR /opt/lammps
 # Build LAMMPS with MPI support
 RUN make mpi -j$(nproc)
 
-# Set the default command to run LAMMPS help
-CMD ["mpirun", "-np", "1", "lmp_mpi", "-h"]
+# Copy your input file into the container
+COPY in.myinput /opt/lammps/in.myinput
+
+# Set the default command to run LAMMPS with your input file
+CMD ["mpirun", "-np", "4", "lmp_mpi", "-in", "in.myinput"]
