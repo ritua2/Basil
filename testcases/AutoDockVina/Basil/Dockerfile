@@ -19,5 +19,5 @@ RUN cd /autodock-vina/build/linux/release && \
 # Set the working directory
 WORKDIR /autodock-vina/build/linux/release
 
-# Run the vina -help command
-CMD ["./vina", "-help"]
+# Run
+CMD ["vina", "--config", "conf.txt"]
