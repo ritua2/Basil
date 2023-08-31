@@ -19,7 +19,7 @@ RUN tar xzf /osu-micro-benchmarks-7.2.tar.gz && \
     ./configure CC=mpicc CXX=mpicxx --prefix=/opt/osu && \
     make && \
     make install && \
-    cd .. && rm -rf osu-micro-benchmarks-5.7.1
+    cd .. && rm -rf osu-micro-benchmarks-7.2
 
 CMD mpirun -n 2 osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency && mpirun -n 2 osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_bw && mpirun -n 2 osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_bibw && mpirun -n 2 osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency_mt && mpirun -n 4 /mpi_app/mpi_hello
 #CMD mpirun -n 2 osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency
