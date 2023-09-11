@@ -14,7 +14,7 @@ From: ubuntu:latest
 
 %post
     echo "Installing required packages..."
-    apt-get update && apt-get install -y wget git bash gcc-9 gfortran g++ make file
+    apt-get update && apt-get install -y wget git bash gcc-9 gfortran g++ make file bzip2
 
     echo "Installing Open MPI"
     mkdir -p /tmp/ompi
@@ -24,7 +24,7 @@ From: ubuntu:latest
     cd /tmp/ompi && tar -xjf openmpi-4.1.5.tar.bz2
 
     # Compile and install
-    cd /tmp/ompi/openmpi-4.1.5 && ./configure --prefix=$OMPI_DIR && make install
+    cd /tmp/ompi/openmpi-4.1.5 && ./configure --prefix=$OMPI_DIR && sudo make install
 
     # Set env variables so we can compile our application
     export PATH=$OMPI_DIR/bin:$PATH
