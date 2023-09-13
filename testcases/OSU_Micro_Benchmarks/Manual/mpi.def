@@ -1,40 +1,32 @@
-Bootstrap: docker
+Bootstrap: library
 From: ubuntu:latest
 
-%files
-    mpitest.c /
-    osu-micro-benchmarks-5.8.tgz /
+%post
+    # Install necessary dependencies for OSU microbenchmarks
+    apt-get -y update
+    apt-get -y upgrade
+    apt-get -y install gcc make file wget g++ libtool build-essential libibverbs-dev
+
+    # Download and build OSU microbenchmarks
+    wget http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-7.2.tar.gz
+    tar -zxvf osu-micro-benchmarks-7.2.tar.gz
+    cd osu-micro-benchmarks-7.2
+    ./configure CC=mpicc CXX=mpicxx
+    make
+    make install
+
+%labels
+    Name osu-microbenchmarks
+    Version 7.2
+    Author Armaan
+    Description OSU Microbenchmarks
 
 %environment
-    export OMPI_DIR=/
-    export SINGULARITY_OMPI_DIR=$OMPI_DIR
-    export SINGULARITYENV_APPEND_PATH=$OMPI_DIR/bin
-    export SINGULAIRTYENV_APPEND_LD_LIBRARY_PATH=$OMPI_DIR/lib
+    export PATH=/osu-micro-benchmarks-7.2:$PATH
 
-%post
-    echo "Installing required packages..."
-    apt-get update && apt-get install -y wget git bash gcc-9 gfortran g++ make file bzip2
+%help
+    This Singularity container provides the OSU Microbenchmarks suite.
+    You can run OSU benchmarks after launching this container.
 
-    echo "Installing Open MPI"
-    export OMPI_DIR=/
-    export OMPI_VERSION=4.1.0
-    export OMPI_URL="https://download.open-mpi.org/release/open-mpi/v4.1/openmpi-$OMPI_VERSION.tar.bz2"
-
-    # Download
-    cd / && wget -O openmpi-$OMPI_VERSION.tar.bz2 $OMPI_URL && tar -xjf openmpi-$OMPI_VERSION.tar.bz2
-    # Compile and install
-    cd /openmpi-$OMPI_VERSION && ./configure --prefix=$OMPI_DIR && make install
-    # Set env variables so we can compile our application
-    export PATH=$OMPI_DIR/bin:$PATH
-    export LD_LIBRARY_PATH=$OMPI_DIR/lib:$LD_LIBRARY_PATH
-    export MANPATH=$OMPI_DIR/share/man:$MANPATH
-
-    echo $(mpirun --version)
-    echo "Compiling the MPI application..."
-    cd / && mpicc -o mpitest mpitest.c
-
-    echo "Installing osu-micro-benchmarks-5.8"
-    cd /
-    tar xvfz osu-micro-benchmarks-5.8.tgz
-    cd osu-micro-benchmarks-5.8
-    ./configure CC=mpicc CFLAGS=-I$(pwd)util --prefix=/opt/osu && make && make install
+%runscript
+    mpirun -n 2 opt/osu/libexec/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency
