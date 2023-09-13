@@ -29,4 +29,4 @@ From: ubuntu:latest
     You can run OSU benchmarks after launching this container.
 
 %runscript
-    mpirun -n 2 opt/osu/libexec/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency
+    mpirun -n 2 opt/osu/libexec/osu-micro-benchmarks-7.2/c/mpi/one-sided/osu_latency
