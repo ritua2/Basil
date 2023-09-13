@@ -3,10 +3,112 @@ import os
 import re
 
 def input_(prompt):
-    return input("\n" + prompt + " ")
+    return input("\n" + prompt + "  ")
 
-def main():
-    print("\nINTERACTIVE MODE: BASIL\n")
+def create_singularity_file():
+    print("\nWelcome to Singularity file creation. Follow the prompts below to complete your Singularity Definition File, which will be used to build your Singularity Image.\n")
+
+    # Bootstrap options
+    bootstrapOptions = ["docker", "library", "shub", "oras", "scratch"]
+
+    # Labels
+    print("%label")
+    app_name = input("Enter the name of your application: ")
+    app_version = input("Enter the version of your application: ")
+    app_author = input("Enter the author's name: ")
+    app_description = input("Enter a short description of your application: ")
+
+    # Bootstrap selection
+    print("\nAvailable set of options for bootstrap method: ")
+    for index, option in enumerate(bootstrapOptions, start=1):
+        print(f"{index}. {option}")
+
+    bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+
+    while not bootstrap_selection.isdigit() or not 1 <= int(bootstrap_selection) <= len(bootstrapOptions):
+        print("INVALID SELECTION. PLEASE PROVIDE THE INPUT AGAIN.\n")
+        bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+    bootstrap = bootstrapOptions[int(bootstrap_selection) - 1]
+
+    base_image = input("Enter the base image for your bootstrap: (for example, ubuntu:23.10): ")
+
+    # Files
+    print("\n%files")
+    files = []
+    while True:
+        file = input("Enter the file(s) you'd like to copied to the container or leave empty to finish: ")
+        if not file:
+            break
+        files.append(file)
+
+    # Collect package inputs
+    print("\n%post")
+    packages = []
+    while True:
+        package = input("Enter a package you want to install or leave empty to finish: ")
+        if not package:
+            break
+        packages.append(package)
+
+    post_commands = []
+    while True:
+        post_command = input("\nEnter any setup commands or leave empty to finish: ")
+        if not post_command:
+            break
+        post_commands.append(post_command)
+
+    # Collect environment variable inputs
+    print("\n%environment")
+    environments = []
+    while True:
+        environment = input("Enter an environment variable for your application or leave empty to finish: ")
+        if not environment:
+            break
+        environments.append(environment)
+
+    print("\n%help")
+    help_text = input("Enter the instructions on how to run your program: ")
+
+    print("\n%runscript")
+    app_exec = input("Enter the command to execute your application: ")
+
+    # Create the Singularity definition content
+    singularity_def = f"""Bootstrap: {bootstrap}
+From: {base_image}
+
+%post
+    apt-get update
+    apt-get install -y {" ".join(packages)}
+    {"  ".join(post_commands)}
+
+%labels
+    Name {app_name}
+    Version {app_version}
+    Author {app_author}
+    Description {app_description}
+
+%files
+    {os.linesep.join([' ' + file for file in files])}
+
+%environment
+    {os.linesep.join([' ' + environment for environment in environments])}
+
+%help
+    {help_text}
+
+%runscript
+    {app_exec}
+"""
+
+    # Write the definition content to a .def file
+    def_filename = f"{app_name}_{app_version}.def"
+    with open(def_filename, "w") as def_file:
+        def_file.write(singularity_def)
+
+    print(f"Singularity definition file '{def_filename}' has been created successfully!")
+
+def create_docker_file():
+    print("\nWelcome to Dockerfile creation. Follow the prompts below to complete your Dockerfile, which will be used to build your Docker Image.\n")
     images_and_package_manager = [
         ("ubuntu:23.10", "apt"),
         ("ubuntu:kinetic", "apt"),
@@ -223,41 +325,23 @@ def main():
             "copyright notice": "license_copyright_notice"
         }
     """
-    <label for="name">Please enter the name of the individual/entity responsible for creating the software: </label>
-
- 
+                          <label for="name">Please enter the name of the individual/entity responsible for creating the software: </label>
 
                           <label for="year">Please enter the year of creation/publication of software: </label>
 
- 
-
                           <label for="owner">Please enter the name of the individual/organization that legally owns the software: </label>
-
- 
 
                           <label for="language_type">Please enter the programming language(s) used in the software: </label>
 
- 
-
                           <label for="program_info">Please enter any important information/description regarding the software: </label>
-
- 
 
                           <label for="designation">Please enter the role of the person representing the copyright holder: </label>
 
- 
-
                           <label for="date">Please enter the date on which the license agreement was signed or comes into effect: </label>
-
- 
 
                           <label for="signature">Please enter the name or initials of the copyright holder: </label>
 
- 
-
                           <label for="copyright_notice">Please enter the statement that will be used to indicate that the software is protected by copyright law: </label>
-
- 
 
                           <label for="copyright_holder">Please enter the name of the person/entity that owns the legal copyright for the software: </label>
     """
@@ -274,7 +358,6 @@ def main():
         "copyright holder": "Please enter the name of the person/entity that owns the legal rights for the software: "
     }
 
-    
     # provide list of licenses to choose from. Provide extra option in the last for no license.
     print(">>> Select a license for your project. Select last option if you don't want to add any license.")
     for i, license in enumerate(licenses):
@@ -332,7 +415,6 @@ def main():
             writer.write(modified_license_content)
 
         CONTENTS.append(("LICENSE.txt", "LICENSE"))
-
 
     with open('midas.yml','w+') as midas_file:
         # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
@@ -406,6 +488,23 @@ def main():
         if DEFAULT != "":
             midas_file.write("Default command: ")
             midas_file.write(f'{DEFAULT}\n')
+
+def main():
+    print("\nINTERACTIVE MODE: BASIL\n")
+    print("Docker and Singularity are both containerization technologies that allow you to package up an application and its dependencies into a single image that can be run on any machine. This makes it easy to deploy and manage applications, and to ensure that they are always running in the same environment. Docker is a more popular containerization technology than Singularity. It is easier to use, and there are more Docker images available. However, Singularity is designed for high-performance computing (HPC) environments, and it can be more secure than Docker.")
+    print("\nChoose the container type: ")
+    print("1. Docker")
+    print("2. Singularity")
+    container_type = input_("Enter 1 for Docker and 2 for Singularity: ")
+    
+    if container_type == '1':
+        print("\nDOCKER MODE:\n")
+        create_docker_file()
+    elif container_type == '2':
+        print("\nSINGULARITY MODE:")
+        create_singularity_file()
+    else:
+        print("Invalid selection, please enter 1 for Docker and 2 for Singularity...")
 
 if __name__ == "__main__":
     main()
