@@ -1,0 +1,30 @@
+Bootstrap: library
+From: ubuntu:latest
+
+%post
+    apt-get update
+    apt-get install -y gcc make wget
+    wget http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-5.9.tar.gz  
+    tar -zxvf osu-micro-benchmarks-5.9.tar.gz  
+    cd osu-micro-benchmarks-5.9  
+    ./configure CC=mpicc CXX=mpicxx  
+    make
+    make install
+
+%labels
+    Name benchmark
+    Version v2
+    Author armaan
+    Description ...
+
+%files
+      mpitest.c /
+      
+%environment
+     export PATH=/osu-micro-benchmarks-5.9:$PATH
+
+%help
+    ....
+
+%runscript
+    mpirun -n 2 /opt/osu/libexec/osu-micro-benchmark-5.9/mpi/one-sided/osu_latency
