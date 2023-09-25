@@ -8,17 +8,28 @@ def input_(prompt):
 def create_singularity_file():
     print("\nWelcome to Singularity file creation. Follow the prompts below to complete your Singularity Definition File, which will be used to build your Singularity Image.\n")
 
-    # Bootstrap options
-    bootstrapOptions = ["docker", "library", "shub", "oras", "scratch"]
+    # options
+    bootstrapOptions = ["docker", "library", "shub", "oras"]
+
+    # from - images 
+    dockerImages = ["ubuntu:23.10", "ubuntu:kinetic", "ubuntu:focal", "ubuntu:mantic", "debian:stable", "debian:stable-slim", "debian:stable-backports", "node:20.5.0-slim", "node:20.4-bookworm-slim", "node:20.3.1-slim", "postgres:14", "nginx:1.21.6", "nginx:stable-perl", "nginx:1.25-perl", "nginx:mainline-perl", "python:3.12-rc", "python:3.12.0b4-slim-bullseye", "python:3.12.0b3-slim", "graphcore/tensorflow", "graphcore/tensorflow:2", "graphcore/pytorch", "php", "php:fpm", "php:zts"]
+    libraryImages = ["ubuntu", "debian", "node", "postgres", "nginx", "tensorflow", "pytorch", "php", "python"]
+    shubImages = ["ubuntu:20.04", "debian:bullseye", "node", "nginx", "python"]
+    orasImages = ["docker.io/library/ubuntu:20.04", "docker.io/library/debian:bullseye", "docker.io/library/centos:8", "docker.io/library/alpine:3.14", "docker.io/library/fedora:34", "docker.io/library/opensuse/leap:15.3", "docker.io/library/archlinux:latest", "docker.io/library/scientificlinux:7"]
 
     # Labels
-    print("%label")
+    print("%label: this section is used to add metadata to the file '/.singularity.d/labels.json' within your container. The general format is name-value pairs.")
     app_name = input("Enter the name of your application: ")
     app_version = input("Enter the version of your application: ")
     app_author = input("Enter the author's name: ")
     app_description = input("Enter a short description of your application: ")
 
     # Bootstrap selection
+    print("\n%bootstrap: this determines the agent that will be used to create the base operating system you want to use")
+    print("docker - images hosted on Docker Hub")
+    print("library - images hosted on the Container Library")
+    print("shub - images hosted on Singularity Hub")
+    print("oras - images from supporting OCI resgistries")
     print("\nAvailable set of options for bootstrap method: ")
     for index, option in enumerate(bootstrapOptions, start=1):
         print(f"{index}. {option}")
@@ -30,19 +41,44 @@ def create_singularity_file():
         bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
     bootstrap = bootstrapOptions[int(bootstrap_selection) - 1]
 
-    base_image = input("Enter the base image for your bootstrap: (for example, ubuntu:23.10): ")
+    # Base Image selection
+    print("\n%from: this section determines the base image that will be used to setup your container.")
+
+    if bootstrap == 'docker':
+        print("Available Docker Hub base images: ")
+        for index, image in enumerate(dockerImages, start=1):
+            print(f"{index}. {image}")
+    elif bootstrap == 'library':
+        print("Available Library base images: ")
+        for index, image in enumerate(libraryImages, start=1):
+            print(f"{index}. {image}")
+    elif bootstrap == 'shub':
+        print("Available Singularity Hub base images: ")
+        for index, image in enumerate(shubImages, start=1):
+            print(f"{index}. {image}")
+    elif bootstrap == 'oras':
+        print("Available OCI Registry base images: ")
+        for index, image in enumerate(orasImages, start=1):
+            print(f"{index}. {image}")
+
+    base_image = input("Enter the base image for your bootstrap method by entering its name and NOT the number: ")
 
     # Files
-    print("\n%files")
-    files = []
+    print("\n%files: this section allows you to copy files into the container with greater safety as compared to the %setup section.")
+    files_and_folders = []
     while True:
-        file = input("Enter the file(s) you'd like to copied to the container or leave empty to finish: ")
-        if not file:
+        print("Correct format: path/to/fileORfolder /destination/path")
+        item = input("Enter the file(s)/folder(s) you'd like to copied to the container or leave empty to finish: ")
+        if not item:
             break
-        files.append(file)
+        files_and_folders.append(item)
+
+    files_section = "%files\n"
+    for item in files_and_folders:
+        files_section += f"    {item}"
 
     # Collect package inputs
-    print("\n%post")
+    print("\n%post: this sections allows you to download files from the internet with tools like git and wget, install new software and libraries, write configuration files, create new directories etc.")
     packages = []
     while True:
         package = input("Enter a package you want to install or leave empty to finish: ")
@@ -52,34 +88,41 @@ def create_singularity_file():
 
     post_commands = []
     while True:
-        post_command = input("\nEnter any setup commands or leave empty to finish: ")
+        post_command = input("Enter any setup commands or leave empty to finish: ")
         if not post_command:
             break
         post_commands.append(post_command)
 
+    post_command_block = " && ".join(post_commands)
+
     # Collect environment variable inputs
-    print("\n%environment")
+    print("\n%environment: this section allows you to define environment variables that will be set at runtime. Note that these variables are not made available at build time by their inclusion in this section, which means if you need the same variables during the build process, you should also define them in the %post section.")
     environments = []
     while True:
         environment = input("Enter an environment variable for your application or leave empty to finish: ")
-        if not environment:
+        if not environment.strip():
             break
         environments.append(environment)
 
-    print("\n%help")
+    environment_section = "%environment\n"
+    for env in environments:
+        environments += f"    {env}"
+
+    print("\n%help: any text in this section is transcribed into a metadata file in the container during the build, this text can then be displayed using the 'run-help' command.")
     help_text = input("Enter the instructions on how to run your program: ")
 
-    print("\n%runscript")
+    print("\n%runscript: the contents of this section are written to a file within the container that is executed when the container image is run. When the container is invoked, arguments following the container name are passed to the runscript. This means that you should process arguments within your runscript.")
     app_exec = input("Enter the command to execute your application: ")
 
     # Create the Singularity definition content
-    singularity_def = f"""Bootstrap: {bootstrap}
+    singularity_def = f"""
+Bootstrap: {bootstrap}
 From: {base_image}
 
 %post
     apt-get update
     apt-get install -y {" ".join(packages)}
-    {"  ".join(post_commands)}
+    {post_command_block}
 
 %labels
     Name {app_name}
@@ -87,11 +130,9 @@ From: {base_image}
     Author {app_author}
     Description {app_description}
 
-%files
-    {os.linesep.join([' ' + file for file in files])}
+{files_section}
 
-%environment
-    {os.linesep.join([' ' + environment for environment in environments])}
+{environment_section}
 
 %help
     {help_text}
@@ -403,7 +444,6 @@ def create_docker_file():
         with open(license_file_path, 'w') as license_file:
             license_file.write(license_content)
 
-        
         # Construct the regex pattern
         regex = r'{{%\s*(.*?)\s*%}}'
 
