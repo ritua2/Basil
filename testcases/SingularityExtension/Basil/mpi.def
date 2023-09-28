@@ -1,6 +1,12 @@
 Bootstrap: docker
 From: ubuntu:23.10
 
+%labels
+    Name osu-microbenchmarks
+    Version 7.2
+    Author Armaan
+    Description OSU Microbenchmarks
+
 %files
     mpitest.c /
     osu-micro-benchmarks-5.8.tgz /
@@ -35,3 +41,9 @@ From: ubuntu:23.10
     make && \
     make install
 
+%help
+    This Singularity container provides the OSU Microbenchmarks Suite for the user's ease.
+    You can run OSU benchmarks after launching this container and operating within the container by specifying the file you want to run in the %runscript.
+
+%runscript
+    mpirun -n 2 /opt/osu/libexec/osu-micro-benchmarks-5.8/c/mpi/one-sided/osu_latency
