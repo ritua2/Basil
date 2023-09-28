@@ -3,11 +3,7 @@ FROM ubuntu:23.10
 
 # Install required packages
 RUN apt-get update && \
-    apt-get install -y \
-    openmpi-bin \
-    libopenmpi-dev \
-    git \
-    g++
+    apt-get install -y openmpi-bin libopenmpi-dev git g++
 
 # Clone LAMMPS repository
 RUN git clone https://github.com/lammps/lammps.git /opt/lammps
