@@ -22,7 +22,7 @@ else
 fi
 
 # Copy your input file to the working directory
-cp /in.myinput ~/lammps/in.myinput
+cp in.myinput ~/lammps/in.myinput
 
 # Run LAMMPS with your input file using 4 MPI processes
 mpirun -np 4 ~/lammps/src/lmp_mpi -in in.myinput
