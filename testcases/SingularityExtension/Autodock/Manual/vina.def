@@ -14,4 +14,4 @@ From: ubuntu:kinetic
     make
 
 %runscript
-    /autodock-vina/build/linux/release/vina --config /conf.txt
+    /autodock-vina/build/linux/release/vina --config /conf.txt "$@"
