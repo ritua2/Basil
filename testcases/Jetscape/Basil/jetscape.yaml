@@ -97,4 +97,5 @@ Setup:
   RUN groupadd -g ${id} ${username}
  47:
   useradd --create-home --home-dir /home/${username} -u ${id} -g ${username} ${username}
+  
 Entry command: "/bin/bash"
