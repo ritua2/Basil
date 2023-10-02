@@ -1,4 +1,5 @@
 Base: "ubuntu:focal"
+
 Working directory:
  1: "/jetscape-user"
 
