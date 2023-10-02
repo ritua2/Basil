@@ -1,4 +1,5 @@
 # Run this script as 'sudo ./scratch.sh', after 'chmod +x scratch.sh'
+# to be improved...
 
 #!/bin/bash
 set -e  # Exit immediately if a command exits with a non-zero status.
