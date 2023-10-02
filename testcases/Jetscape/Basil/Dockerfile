@@ -1,3 +1,6 @@
+# This file was used as a testcase for BASIL, it was found at https://github.com/JETSCAPE/JETSCAPE/blob/main/docker/Dockerfile.base
+# Use 'docker run -it {image-name} to run it, you'll enter the container and then you can run any of the installed programs as needed
+
 FROM ubuntu:focal
 
 WORKDIR /jetscape-user
