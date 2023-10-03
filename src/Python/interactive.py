@@ -528,7 +528,7 @@ def main():
     container_type = input_("Enter 1 for Docker and 2 for Singularity: ")
     
     if container_type == '1':
-        print("\nDOCKER MODE:\n")
+        print("\nDOCKER MODE:")
         create_docker_file()
     elif container_type == '2':
         print("\nSINGULARITY MODE:")
