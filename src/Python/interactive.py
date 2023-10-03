@@ -5,6 +5,18 @@ import re
 def input_(prompt):
     return input("\n" + prompt + "  ")
 
+def gather_input(prompt, collection=None):
+    inputs = []
+    while True:
+        user_input = input(prompt)
+        if not user_input:
+            break
+        if collection and user_input not in collection:
+            print("Invalid input. Please select from the provided options.")
+            continue
+        inputs.append(user_input)
+    return inputs
+
 def create_singularity_file():
     print("\nWelcome to Singularity file creation. Follow the prompts below to complete your Singularity Definition File, which will be used to build your Singularity Image.\n")
 
@@ -15,7 +27,7 @@ def create_singularity_file():
     dockerImages = ["ubuntu:23.10", "ubuntu:kinetic", "ubuntu:focal", "ubuntu:mantic", "debian:stable", "debian:stable-slim", "debian:stable-backports", "node:20.5.0-slim", "node:20.4-bookworm-slim", "node:20.3.1-slim", "postgres:14", "nginx:1.21.6", "nginx:stable-perl", "nginx:1.25-perl", "nginx:mainline-perl", "python:3.12-rc", "python:3.12.0b4-slim-bullseye", "python:3.12.0b3-slim", "graphcore/tensorflow", "graphcore/tensorflow:2", "graphcore/pytorch", "php", "php:fpm", "php:zts"]
     libraryImages = ["ubuntu", "debian", "node", "postgres", "nginx", "tensorflow", "pytorch", "php", "python"]
     shubImages = ["ubuntu:20.04", "debian:bullseye", "node", "nginx", "python"]
-    orasImages = ["docker.io/library/ubuntu:20.04", "docker.io/library/debian:bullseye", "docker.io/library/centos:8", "docker.io/library/alpine:3.14", "docker.io/library/fedora:34", "docker.io/library/opensuse/leap:15.3", "docker.io/library/archlinux:latest", "docker.io/library/scientificlinux:7"]
+    orasImages = ["docker.io/library/ubuntu:20.04", "docker.io/library/debian:bullseye", "docker.io/library/fedora:34", "docker.io/library/opensuse/leap:15.3", "docker.io/library/archlinux:latest", "docker.io/library/scientificlinux:7"]
 
     # Labels
     print("%label: this section is used to add metadata to the file '/.singularity.d/labels.json' within your container. The general format is name-value pairs.")
@@ -30,83 +42,68 @@ def create_singularity_file():
     print("library - images hosted on the Container Library")
     print("shub - images hosted on Singularity Hub")
     print("oras - images from supporting OCI resgistries")
+
     print("\nAvailable set of options for bootstrap method: ")
     for index, option in enumerate(bootstrapOptions, start=1):
         print(f"{index}. {option}")
 
-    bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+    bootstrap_selection = input("Select the bootstrap method by entering it's corresponding number: ")
 
     while not bootstrap_selection.isdigit() or not 1 <= int(bootstrap_selection) <= len(bootstrapOptions):
         print("INVALID SELECTION. PLEASE PROVIDE THE INPUT AGAIN.\n")
-        bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+        bootstrap_selection = input("Select the bootstrap method by entering it's corresponding number: ")
     bootstrap = bootstrapOptions[int(bootstrap_selection) - 1]
 
     # Base Image selection
     print("\n%from: this section determines the base image that will be used to setup your container.")
 
-    if bootstrap == 'docker':
-        print("Available Docker Hub base images: ")
-        for index, image in enumerate(dockerImages, start=1):
-            print(f"{index}. {image}")
-    elif bootstrap == 'library':
-        print("Available Library base images: ")
-        for index, image in enumerate(libraryImages, start=1):
-            print(f"{index}. {image}")
-    elif bootstrap == 'shub':
-        print("Available Singularity Hub base images: ")
-        for index, image in enumerate(shubImages, start=1):
-            print(f"{index}. {image}")
-    elif bootstrap == 'oras':
-        print("Available OCI Registry base images: ")
-        for index, image in enumerate(orasImages, start=1):
+    base_image_lists = {
+        'docker': dockerImages,
+        'library': libraryImages,
+        'shub': shubImages,
+        'oras': orasImages
+    }
+
+    if bootstrap in base_image_lists:
+        images = base_image_lists[bootstrap]
+        for index, image in enumerate(images, start=1):
             print(f"{index}. {image}")
 
-    base_image = input("Enter the base image for your bootstrap method by entering its name and NOT the number: ")
+        base_image_index = input(f"Select the base image for {bootstrap} by entering it's corresponding number: ")
+
+        while not base_image_index.isdigit() or not 1 <= int(base_image_index) <= len(images):
+            print("INVALID SELECTION. Please provide the input again.\n")
+            base_image_index = input(f"Select the base image for {bootstrap} by entering it's corresponding number: ")
+
+        base_image = images[int(base_image_index) - 1]
 
     # Files
     print("\n%files: this section allows you to copy files into the container with greater safety as compared to the %setup section.")
-    files_and_folders = []
-    while True:
-        print("Correct format: path/to/fileORfolder /destination/path")
-        item = input("Enter the file(s)/folder(s) you'd like to copied to the container or leave empty to finish: ")
-        if not item:
-            break
-        files_and_folders.append(item)
+    files_and_folders = gather_input("Enter the file(s)/folder(s) you'd like to copy to the container or leave empty to finish: ")
 
-    files_section = "%files\n"
-    for item in files_and_folders:
-        files_section += f"    {item}"
-
-    # Collect package inputs
+    # packages and commands
     print("\n%post: this sections allows you to download files from the internet with tools like git and wget, install new software and libraries, write configuration files, create new directories etc.")
-    packages = []
-    while True:
-        package = input("Enter a package you want to install or leave empty to finish: ")
-        if not package:
-            break
-        packages.append(package)
+    packages = gather_input("Enter the package you want to install or leave empty to finish: ")
 
-    post_commands = []
-    while True:
-        post_command = input("Enter any setup commands or leave empty to finish: ")
-        if not post_command:
-            break
-        post_commands.append(post_command)
+    post_commands = gather_input("Enter the setup commands or leave empty to finish: ")
 
-    post_command_block = " && ".join(post_commands)
+    # environment variables
+    print("\n%environment: this section allows you to define environment variables that will be set at runtime.")
+    environments = gather_input("Enter an environment variable for your application or leave empty to finish: ")
 
-    # Collect environment variable inputs
-    print("\n%environment: this section allows you to define environment variables that will be set at runtime. Note that these variables are not made available at build time by their inclusion in this section, which means if you need the same variables during the build process, you should also define them in the %post section.")
-    environments = []
-    while True:
-        environment = input("Enter an environment variable for your application or leave empty to finish: ")
-        if not environment.strip():
-            break
-        environments.append(environment)
+    # post, env and files construction
+    post_section = f"""
+%post
+    apt-get update"""
 
-    environment_section = "%environment\n"
-    for env in environments:
-        environments += f"    {env}"
+    if packages:
+        post_section += f"\n    apt-get install -y {' '.join(packages)}"
+    if post_commands:
+        post_section += f"\n    {' && '.join(post_commands)}"
+
+    environment_section = "\n".join(f"  {env}" for env in environments)
+
+    files_section = "\n    ".join(files_and_folders)
 
     print("\n%help: any text in this section is transcribed into a metadata file in the container during the build, this text can then be displayed using the 'run-help' command.")
     help_text = input("Enter the instructions on how to run your program: ")
@@ -118,25 +115,18 @@ def create_singularity_file():
     singularity_def = f"""
 Bootstrap: {bootstrap}
 From: {base_image}
-
-%post
-    apt-get update
-    apt-get install -y {" ".join(packages)}
-    {post_command_block}
-
+{post_section}
 %labels
     Name {app_name}
     Version {app_version}
     Author {app_author}
     Description {app_description}
-
-{files_section}
-
-{environment_section}
-
+%files
+    {files_section}
+%environment
+    {environment_section}
 %help
     {help_text}
-
 %runscript
     {app_exec}
 """
