@@ -1,0 +1,16 @@
+Image type: "docker"
+
+Base: "ubuntu:16.04"
+
+Setup:
+  6: "apt-get update"
+  7: "apt-get install -y fortune"
+  8: "apt-get install -y cowsay"
+  9: "apt-get install -y lolcat"
+  10: "apt-get install -y python3-pip"
+
+Environment variables:
+  2: LC_ALL:C
+  3: PATH:/usr/games:$PATH
+ 
+Default command: fortune | cowsay | lolcat
