@@ -178,14 +178,8 @@ def sf_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def sf_env(envar_instruction):
-    #env_broken = envar_instruction.split(":")
-    #if len(env_broken) != 2:
-    #    raise ValueError("Invalid environment instruction format")
-    #return "%environment\n    export " + env_broken[0].strip() + "=" + env_broken[1].strip()
-    #
-    #return envar_instruction
-    env_broken = envar_instruction.split(":")
-    return "export "+env_broken[0]+" "+env_broken[1]
+    envar_instruction = envar_instruction.replace(":","=",1)
+    return "export "+ envar_instruction
 
 # Prints the default command
 def sf_cmd(cmd_instruction):    
@@ -272,7 +266,6 @@ def create_imagefile(file_with_data, output_file_path, spacing="    "):
         return it[0]
     
     image_type_check = it[0]
-    print(image_type_check)
 
     bc = base_check(original_data)
     if bc[1]:
@@ -289,8 +282,12 @@ def create_imagefile(file_with_data, output_file_path, spacing="    "):
         original_data["Default command"] = False
     
     if image_type_check == "docker":
+        if output_file_path is None:
+            output_file_path = "Dockerfile"
         write_to_dockerfile(output_file_path, image_base, combined_inputs, original_data.get("Default command",False), original_data.get("Entry command",False), spacing)
-        return "Dockerfile created at '"+output_file_path+"'"
+        return output_file_path
     elif image_type_check == "singularity":
+        if output_file_path is None:
+            output_file_path = "singularity.def"
         write_to_def_file(output_file_path, image_base, combined_inputs, original_data.get("Default command",False), original_data.get("Entry command",False), spacing)
-        return "Singularity Definition file created at '"+output_file_path+"'"
+        return output_file_path

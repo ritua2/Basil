@@ -1,4 +1,4 @@
-Image type: "docker"
+Image type: "singularity"
 
 Base: "ubuntu:16.04"
 

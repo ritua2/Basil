@@ -70,9 +70,10 @@ def docker_function():
                     color_print.color_print("Error: No '"+midas_translator[checking_type]+"' provided, strict parsing", "RED")
                     sys.exit()
 
-    # Create Dockerfile
-    print(MIDAS_parser.create_imagefile(args.file, args.output))
-    os.system('cat Dockerfile')
+    # Create dockerfile/specification file
+    image_file = MIDAS_parser.create_imagefile(args.file, args.output)
+    os.system('cat '+image_file)
+
 
     if not args.tag:
         sys.exit()
@@ -128,7 +129,7 @@ parser.add_argument("--ignore-run-warnings", type=str2bool, nargs='?', const=Tru
 parser.add_argument("--strict", type=str2bool, nargs='?', const=True, default=False, help="Treat warnings as errors, stop program when one occurs, 'yes'/'y'/'Y'/'1' for True")
 
 parser.add_argument("-f", "--file", type=str, nargs='?', const=True, default="midas.yml", help="Input file")
-parser.add_argument("-o", "--output", type=str, nargs='?', const=True, default="Dockerfile", help="Output Dockerfile path")
+parser.add_argument("-o", "--output", type=str, nargs='?', const=True, help="Output image path")
 
 parser.add_argument("-t", "--tag", type=str, nargs='?', const=True, default=False, help="Name:version of the image if built, by default, no image will be built")
 parser.add_argument("--timeout", type=int, nargs='?', const=True, default=60, help="Max time in s (int) for building docker image, set to 60 s by default")
