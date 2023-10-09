@@ -1,0 +1,28 @@
+Bootstrap: docker
+From: ubuntu:23.10
+
+%post
+    apt-get update &&\
+    apt install -y gcc &&\
+    apt install -y make &&\
+    apt install -y file &&\
+    apt install -y wget &&\
+    apt install -y g++ &&\
+    apt install -y libtool &&\
+    apt install -y build-essential &&\
+    apt install -y libibverbs-dev &&\
+    apt install -y openmpi-bin openmpi-common libopenmpi-dev &&\
+    apt-get upgrade -y &&\
+    apt-get clean -y &&\
+    OSU_VERSION='7.2' &&\
+    wget -O osu-micro-benchmarks-$OSU_VERSION.tar.gz http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-$OSU_VERSION.tar.gz &&\
+    tar -zxvf osu-micro-benchmarks-$OSU_VERSION.tar.gz &&\
+    cd osu-micro-benchmarks-$OSU_VERSION &&\
+    ./configure CC=mpicc CXX=mpicxx &&\
+    make && make install
+
+%environment
+    export PATH=/osu-micro-benchmarks-7.2:$PATH
+
+%runscript
+    mpirun -n 2 /osu-micro-benchmarks-7.2/c/mpi/one-sided/osu_get_latency
