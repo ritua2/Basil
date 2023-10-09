@@ -123,8 +123,13 @@ def df_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def df_env(envar_instruction):
-    env_broken = envar_instruction.split(":")
-    return "ENV "+env_broken[0]+" "+env_broken[1]
+    if isinstance(envar_instruction, dict):
+       key, value = next(iter(envar_instruction.items()))
+       return f"ENV {key}={value}"
+    else:
+       return f"ENV {envar_instruction}"
+    #env_broken = envar_instruction.split(":")
+    #return "ENV "+env_broken[0]+" "+env_broken[1]
 
 # Prints the default command
 def df_cmd(cmd_instruction):
@@ -137,7 +142,6 @@ def df_cmd(cmd_instruction):
 def df_ent(ent_instruction):
     ent_space_broken = ent_instruction.split(" ")
     ent_space_broken = ["\""+a+"\"" for a in ent_space_broken if a != '']
-            
     return "ENTRYPOINT [" + ", ".join(ent_space_broken) + "]"
 
 def df_expose(expose_instruction):
@@ -178,16 +182,21 @@ def sf_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def sf_env(envar_instruction):
-    envar_instruction = envar_instruction.replace(":","=",1)
-    return "export "+ envar_instruction
+    if isinstance(envar_instruction, dict):
+       key, value = next(iter(envar_instruction.items()))
+       return f"export {key}={value}"
+    else:
+       return f"export {envar_instruction}"
+    #envar_instruction = envar_instruction.replace(":","=",1)
+    #return "export "+ envar_instruction
 
 # Prints the default command
-def sf_cmd(cmd_instruction):    
+def sf_cmd(cmd_instruction):
     cmd_space_broken = cmd_instruction.split(" ")
     cleaned_cmds = [cmd for cmd in cmd_space_broken if cmd != '']
 
     return "%runscript\n    " + " ".join(cleaned_cmds)
-    
+
 # Given all instructions, it processes them and writes them into a file
 # dockerfile_path (str): path of the created Dockerfile
 # image_base (str): image base
@@ -230,7 +239,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
         files_to_copy = []
         env_to_copy = []
         #
-        dfp.write("Bootstrap: library\n")
+        dfp.write("Bootstrap: docker\n")
         dfp.write(sf_base(image_base)+"\n")
 
         for an_instruction in ordered_instructions:
@@ -241,7 +250,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
                 files_to_copy.append(sf_copy(an_instruction[1]))
             elif an_instruction[2] == "Environment variables":
                 env_to_copy.append(sf_env(an_instruction[1]))
-        
+
         #
         if env_to_copy:
             dfp.write("\n%environment\n")
@@ -255,7 +264,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
 
         if default_comm:
             dfp.write("\n"+sf_cmd(default_comm)+"\n")
-        
+
 # Given a json/yaml file with the instructions, it creates the dockerfile
 # file_with_data (str): path to the file to be parsed
 def create_imagefile(file_with_data, output_file_path, spacing="    "):
@@ -264,7 +273,7 @@ def create_imagefile(file_with_data, output_file_path, spacing="    "):
     it = image_check(original_data)
     if it[1]:
         return it[0]
-    
+
     image_type_check = it[0]
 
     bc = base_check(original_data)
@@ -280,13 +289,13 @@ def create_imagefile(file_with_data, output_file_path, spacing="    "):
 
     if "Default command" not in original_data:
         original_data["Default command"] = False
-    
-    if image_type_check == "docker":
+
+    if image_type_check == 'docker':
         if output_file_path is None:
             output_file_path = "Dockerfile"
         write_to_dockerfile(output_file_path, image_base, combined_inputs, original_data.get("Default command",False), original_data.get("Entry command",False), spacing)
         return output_file_path
-    elif image_type_check == "singularity":
+    elif image_type_check == 'singularity':
         if output_file_path is None:
             output_file_path = "singularity.def"
         write_to_def_file(output_file_path, image_base, combined_inputs, original_data.get("Default command",False), original_data.get("Entry command",False), spacing)
