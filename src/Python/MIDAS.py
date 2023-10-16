@@ -25,6 +25,47 @@ def str2bool(v):
     else:
         raise argparse.ArgumentTypeError('Boolean value expected.')
 
+
+
+# Argument parsing
+parser = argparse.ArgumentParser()
+
+base_images = ["ubuntu:23.10", "ubuntu:kinetic",
+               "debian:stable", "debian:11",
+               "node:lts", "node:19-bullseye",
+               "postgres:13.11", "postgres:14",
+               "nginx:1.21.6", "nginx:mainline",
+               "python:3.12-rc", "python:3.10.4",
+               "graphcore/tensorflow", "graphcore/pytorch"]
+
+parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
+parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
+parser.add_argument("--ignore-copy-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore COPY warnings, 'yes'/'y'/'Y'/'1' for True")
+parser.add_argument("--ignore-run-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore RUN warnings, 'yes'/'y'/'Y'/'1' for True")
+parser.add_argument("--strict", type=str2bool, nargs='?', const=True, default=False, help="Treat warnings as errors, stop program when one occurs, 'yes'/'y'/'Y'/'1' for True")
+
+parser.add_argument("-f", "--file", type=str, nargs='?', const=True, default="midas.yml", help="Input file")
+parser.add_argument("-o", "--output", type=str, nargs='?', const=True, help="Output image path")
+
+parser.add_argument("-t", "--tag", type=str, nargs='?', const=True, default=False, help="Name:version of the image if built, by default, no image will be built")
+parser.add_argument("--timeout", type=int, nargs='?', const=True, default=60, help="Max time in s (int) for building docker image, set to 60 s by default")
+
+parser.add_argument("--push", type=str2bool, nargs='?', const=True, default=False, help="Pushes to dockerhub, 'yes'/'y'/'Y'/'1' for True")
+parser.add_argument("-u", "--username", type=str, nargs='?', const=True, default=False, help="Dockerhub username, will prompt the user if not set and pushing")
+
+parser.add_argument("-b", "--base-image", type=str, choices=base_images, help="Base image to be used")
+
+args = parser.parse_args()
+
+if not os.path.exists(args.file):
+    sys.exit("ERROR: File " + args.file + " does not exist.")
+
+provided_data = MIDAS_parser.parse_commands(args.file)
+
+if MIDAS_parser.base_check(provided_data)[1]:
+    sys.exit("Necessary argument 'Base' is missing from input file")
+
+
 def docker_function():
     docker_instructions = MIDAS_parser.order_inputs(provided_data)
 
@@ -107,48 +148,10 @@ def docker_function():
             print(line)
 
 
+docker_function()
+
 def singularity_function():
     # to be populated
     pass
-
-# Argument parsing
-parser = argparse.ArgumentParser()
-
-base_images = ["ubuntu:23.10", "ubuntu:kinetic",
-               "debian:stable", "debian:11",
-               "node:lts", "node:19-bullseye",
-               "postgres:13.11", "postgres:14",
-               "nginx:1.21.6", "nginx:mainline",
-               "python:3.12-rc", "python:3.10.4",
-               "graphcore/tensorflow", "graphcore/pytorch"]
-
-parser.add_argument("--ignore-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore all warnings, 'yes'/'y'/'Y'/'1' for True")
-parser.add_argument("--ignore-cmd-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore CMD warnings, 'yes'/'y'/'Y'/'1' for True")
-parser.add_argument("--ignore-copy-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore COPY warnings, 'yes'/'y'/'Y'/'1' for True")
-parser.add_argument("--ignore-run-warnings", type=str2bool, nargs='?', const=True, default=False, help="Ignore RUN warnings, 'yes'/'y'/'Y'/'1' for True")
-parser.add_argument("--strict", type=str2bool, nargs='?', const=True, default=False, help="Treat warnings as errors, stop program when one occurs, 'yes'/'y'/'Y'/'1' for True")
-
-parser.add_argument("-f", "--file", type=str, nargs='?', const=True, default="midas.yml", help="Input file")
-parser.add_argument("-o", "--output", type=str, nargs='?', const=True, help="Output image path")
-
-parser.add_argument("-t", "--tag", type=str, nargs='?', const=True, default=False, help="Name:version of the image if built, by default, no image will be built")
-parser.add_argument("--timeout", type=int, nargs='?', const=True, default=60, help="Max time in s (int) for building docker image, set to 60 s by default")
-
-parser.add_argument("--push", type=str2bool, nargs='?', const=True, default=False, help="Pushes to dockerhub, 'yes'/'y'/'Y'/'1' for True")
-parser.add_argument("-u", "--username", type=str, nargs='?', const=True, default=False, help="Dockerhub username, will prompt the user if not set and pushing")
-
-parser.add_argument("-b", "--base-image", type=str, choices=base_images, help="Base image to be used")
-
-args = parser.parse_args()
-
-if not os.path.exists(args.file):
-    sys.exit("ERROR: File " + args.file + " does not exist.")
-
-provided_data = MIDAS_parser.parse_commands(args.file)
-
-if MIDAS_parser.base_check(provided_data)[1]:
-    sys.exit("Necessary argument 'Base' is missing from input file")
-
-docker_function()
 
 singularity_function()
