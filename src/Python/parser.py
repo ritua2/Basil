@@ -123,13 +123,8 @@ def df_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def df_env(envar_instruction):
-    if isinstance(envar_instruction, dict):
-       key, value = next(iter(envar_instruction.items()))
-       return f"ENV {key}={value}"
-    else:
-       return f"ENV {envar_instruction}"
-    #env_broken = envar_instruction.split(":")
-    #return "ENV "+env_broken[0]+" "+env_broken[1]
+    env_broken = envar_instruction.split(":",1)
+    return "ENV "+env_broken[0]+" "+env_broken[1]
 
 # Prints the default command
 def df_cmd(cmd_instruction):
@@ -182,13 +177,8 @@ def sf_copy(copy_instruction):
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def sf_env(envar_instruction):
-    if isinstance(envar_instruction, dict):
-       key, value = next(iter(envar_instruction.items()))
-       return f"export {key}={value}"
-    else:
-       return f"export {envar_instruction}"
-    #envar_instruction = envar_instruction.replace(":","=",1)
-    #return "export "+ envar_instruction
+    envar_instruction = envar_instruction.replace(":","=",1)
+    return "export "+ envar_instruction
 
 # Prints the default command
 def sf_cmd(cmd_instruction):    
@@ -235,6 +225,8 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
 def write_to_def_file(def_file_path, image_base, ordered_instructions, default_comm=False, entry_comm=False, spacing="    "):
 
     with open(def_file_path, "w") as dfp:
+        files_available = False
+        envs_available = False
         #
         files_to_copy = []
         env_to_copy = []
@@ -247,20 +239,16 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
             if an_instruction[2] == "Setup":
                 dfp.write(sf_run(an_instruction[1], spacing)+"\n")
             elif an_instruction[2] == "Contents":
-                files_to_copy.append(sf_copy(an_instruction[1]))
+                if not files_available:
+                    dfp.write("\n%files\n")
+                    files_available = True
+                dfp.write(spacing + sf_copy(an_instruction[1])+ "\n")
             elif an_instruction[2] == "Environment variables":
-                env_to_copy.append(sf_env(an_instruction[1]))
+                if not envs_available:
+                    dfp.write("\n%environment\n")
+                    envs_available = True
+                dfp.write(spacing + sf_env(an_instruction[1]) + "\n")
         
-        #
-        if env_to_copy:
-            dfp.write("\n%environment\n")
-            for env_instruction in env_to_copy:
-                dfp.write(spacing + env_instruction + "\n")
-
-        if files_to_copy:
-            dfp.write("\n%files\n")
-            for file_instruction in files_to_copy:
-                dfp.write(spacing + file_instruction + "\n")
 
         if default_comm:
             dfp.write("\n"+sf_cmd(default_comm)+"\n")
