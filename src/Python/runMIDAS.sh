@@ -88,25 +88,33 @@ if [[ $1 == "-b" ]]; then
 
     # If running locally, then build the project locally
     else
-        # Step 2
-        echo "Building your Docker Image..."
-        docker build -t my_image -f Dockerfile . # Builds docker image
-        image_id=`docker image inspect --format='{{.Id}}' my_image| cut -d ':' -f 2`
+        # Read the "midas.yml" file and extract the Image type
+        image_type=$(grep "Image type:" midas.yml | awk -F"'" '{print $2}')
 
-        echo "Image ID: $image_id"
-        # grep to get id, push int to snyk and run cmd
+        # Check the Image type and perform actions accordingly
+        if [ "$image_type" == "singularity" ]; then
+            echo "Performing actions for Singularity"
+            singularity build singularity_image.sif singularity.def
+            singularity run singularity_image.sif
+        elif [ "$image_type" == "docker" ]; then
+            echo "Building your Docker Image..."
+            docker build -t my_image -f Dockerfile . # Builds docker image
+            image_id=`docker image inspect --format='{{.Id}}' my_image| cut -d ':' -f 2`
 
-        # Step 3
-        echo "Running SNYK analysis for your image..."
-        echo "Image ID: $image_id"
+            echo "Image ID: $image_id"
 
-        ## Run snyk test
-        bash $script_dir/snyktest.sh $image_id
+            echo "Running SNYK analysis for your image..."
+            echo "Image ID: $image_id"
 
+            bash $script_dir/snyktest.sh $image_id
 
-        # Step 4
-        echo "Running your Docker image..."
-        docker run my_image
+            echo "Running your Docker image..."
+            docker run my_image
+        else
+            echo "Error: Unknown image type"
+        fi
+
+        
     fi
    
 else
