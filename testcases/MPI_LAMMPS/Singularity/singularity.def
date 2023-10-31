@@ -1,0 +1,21 @@
+Bootstrap: docker
+From: ubuntu:latest
+
+%post
+    apt-get update &&\
+    apt-get install -y openmpi-bin libopenmpi-dev git build-essential cmake &&\
+    git clone https://github.com/lammps/lammps.git ~/lammps &&\
+    cd ~/lammps &&\
+    mkdir build &&\
+    cd build &&\
+    cmake ../cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_MPI=yes &&\
+    make -j$(nproc) &&\
+    make install &&\
+    cd ~ &&\
+    rm -rf ~/lammps
+
+%files
+    in.myinput /mpi/in.myinput
+
+%runscript
+    mpirun -np 4 /usr/local/bin/lmp -in /mpi/in.myinput

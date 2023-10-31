@@ -1,0 +1,102 @@
+Base: "ubuntu:focal"
+
+Working directory:
+ 1: "/jetscape-user"
+
+Environment variables:
+ 2:
+  DEBIAN_FRONTEND=noninteractive
+ 3:
+  username=jetscape-user
+ 4:
+  ROOTSYS="/usr/local/root"
+ 5:
+  PATH="${ROOTSYS}/bin:${PATH}"
+ 6:
+  LD_LIBRARY_PATH="${ROOTSYS}/lib:${LD_LIBRARY_PATH}"
+ 7:
+  PYTHONPATH="${ROOTSYS}/lib"
+ 8:
+  JETSCAPE_DIR="/home/${username}/JETSCAPE"
+ 9:
+  SMASH_DIR="${JETSCAPE_DIR}/external_packages/smash/smash_code"
+ 10:
+  EIGEN3_ROOT /usr/include/eigen3
+ 11:
+  PYTHIA8DIR /usr/local/
+ 12:
+  PYTHIA8 /usr/local/
+ 13:
+  PYTHIA8_ROOT_DIR /usr/local/
+ 14:
+  PATH $PATH:$PYTHIA8DIR/bin
+ 15:
+  pythiaV="8309"
+ 16:
+  id=1234
+
+Setup:
+ 17:
+  apt update && apt install -y doxygen emacs ffmpeg gsl-bin hdf5-tools less libboost-all-dev libeigen3-dev libgsl-dev apt install -y libhdf5-serial-dev libxpm-dev openmpi-bin rsync swig valgrind git vim build-essential cmake wget
+ 18:
+  apt install -y curl tclsh tcl-dev libxft-dev libxext-dev libfftw3-3 && rm -rf /var/lib/apt/lists/*
+ 19:
+  apt update && apt install -y python3-pip pip3 install --upgrade pip pip3 install emcee==2.2.1 h5py hic hsluv jupyter apt install -y matplotlib nbdime numpy pandas pathlib ptemcee pyhepmc pyyaml scikit-learn
+ 20:
+  apt install -y scipy seaborn tqdm
+ 21:
+  mkdir -p ${ROOTSYS} && mkdir -p ${HOME}/root
+ 22:
+  cd ${HOME}/root && git clone --branch v6-26-06 --depth=1 https://github.com/root-project/root.git src
+ 23:
+  cd ${HOME}/root/src && mkdir build && cd build
+ 24:
+  cmake ../src -DCMAKE_CXX_STANDARD=14 -DCMAKE_INSTALL_PREFIX=${ROOTSYS}
+ 25:
+  make -j4 install
+ 26:
+  rm -r ${HOME}/root
+ 27:
+  curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.5.tar.gz | tar -xvzC /usr/local
+ 28:
+  cd /usr/local && mkdir hepmc3-build && cd hepmc3-build
+ 29:
+  cmake ../HepMC3-3.2.5 -DCMAKE_INSTALL_PREFIX=/usr/local -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON
+ 30:
+  make -j4 install
+ 31:
+  rm -r /usr/local/hepmc3-build
+ 32:
+  RUN curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvzC /usr/local
+ 33:
+  cd /usr/local/pythia${pythiaV}
+ 34:
+  ./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.5
+ 35:
+  make -j4
+ 36:
+  make -j4 install
+ 37:
+  cd / && git clone --depth 1 --branch v1.3.8.8 https://github.com/matplo/heppy.git
+ 38:
+  cd heppy && ./external/fastjet/build.sh
+ 39:
+  cd heppy && ./external/hepmc2/build.sh
+ 40:
+  cd heppy && ./cpptools/build.sh
+ 41:
+  curl -SLk https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz | tar -xvzC /usr/local
+ 42:
+  cd /usr/local/modules-4.5.1
+ 43:
+  ./configure --prefix=/usr/local --modulefilesdir=/heppy/modules
+ 44:
+  make -j4
+ 45:
+  make -j4 install
+ 46:
+  RUN groupadd -g ${id} ${username}
+ 47:
+  useradd --create-home --home-dir /home/${username} -u ${id} -g ${username} ${username}
+  
+Entry command: "/bin/bash"

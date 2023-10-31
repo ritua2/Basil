@@ -1,5 +1,3 @@
-
-
 #################################################
 # OpenSees 
 
@@ -9,7 +7,6 @@
 # License: Apache License 2.0
 
 #################################################
-
 
 FROM ubuntu:16.04
 MAINTAINER Stephen Mock <mock@tacc.utexas.edu>

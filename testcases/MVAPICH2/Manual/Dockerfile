@@ -1,5 +1,3 @@
-# Basic version w/o MVAPICH2 and OSU Micro Benchmarks
-
 FROM ubuntu:latest
 
 RUN apt-get update && \

@@ -1,0 +1,37 @@
+Image type: singularity
+Base: "ubuntu:latest"
+
+Working directory:
+ 1: "/"
+
+Contents:
+ 2:
+  in.myinput:/mpi/in.myinput
+ 3:
+  LICENSE.txt:./LICENSE
+
+Setup:
+ 4:
+  apt-get update
+ 5:
+  apt-get install -y openmpi-bin libopenmpi-dev git build-essential cmake
+ 6:
+  git clone https://github.com/lammps/lammps.git ~/lammps
+ 7:
+  cd ~/lammps
+ 8:
+  mkdir build
+ 9:
+  cd build
+ 10:
+  cmake ../cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_MPI=yes
+ 11:
+  make -j$(nproc)
+ 12:
+  make install
+ 13:
+  cd ~
+ 14:
+  rm -rf ~/lammps
+  
+Default command: "mpirun -np 4 /usr/local/bin/lmp -in /mpi/in.myinput"

@@ -26,6 +26,8 @@ perl /home/exouser/testing/Blast/Manual/ncbi-blast-2.14.1+/bin/update_blastdb.pl
 # Check all files downloaded
 ls -l
 
+sudo apt install ncbi-blast+
+
 # Run help flag for verification
 blastn -help
 
