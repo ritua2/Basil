@@ -1,24 +1,71 @@
-Base: "postgres"
-
-Working directory: 
-  1: "/MIDAS"
-
+Image type: 'docker'
+Base: "ubuntu:focal"
+Working directory:
+ 1: "/jetscape-user"
+Environment variables:
+ 2:
+  DEBIAN_FRONTEND: noninteractive
+ 3:
+  username: jetscape-user
+ 4:
+  ROOTSYS: usr/local/root
+ 5:
+  PATH: ${ROOTSYS}/bin:${PATH}
+ 6:
+  LD_LIBRARY_PATH: ${ROOTSYS}/lib:${LD_LIBRARY_PATH}
+ 7:
+  PYTHONPATH: ${ROOTSYS}/lib
+ 8:
+  JETSCAPE_DIR: /home/${username}/JETSCAPE
+ 9:
+  SMASH_DIR: ${JETSCAPE_DIR}/external_packages/smash/smash_code
+ 10:
+  EIGEN3_ROOT: /usr/include/eigen3
+ 11:
+  PYTHIA8DIR: /usr/local/
+ 12:
+  PYTHIA8: /usr/local/
+ 13:
+  PYTHIA8_ROOT_DIR: /usr/local/
+ 14:
+  PATH: $PATH:$PYTHIA8DIR/bin
+ 15:
+  pythiaV: 8309
+ 16:
+  id: 1234
 Setup:
-  6: "apt-get update"
-  7: "apt-get install -y python3 gcc"
-  8: "apt-get install -y curl"
-  9: "apt-get install -y wget"
-
-Contents:
-  4: "sample-input.midas.json"
-  5: "sample-input.midas.json:/MIDAS/MIDAS/sample-input.midas.json"
-
-Environmental variables:
-  2:
-    c1: test
-    c2: test2
-  3: 
-    d1: sample1
-    d2: sample2
-
-Default command: echo 'In the hopes that everything I touch, turns to gold...'
+ 17: "apt-get update"
+ 18: "apt install -y doxygen emacs ffmpeg gsl-bin hdf5-tools less libboost-all-dev libeigen3-dev libgsl-dev "
+ 19: "apt install -y libhdf5-serial-dev libxpm-dev openmpi-bin rsync swig valgrind git vim build-essential cmake wget"
+ 20: "apt install -y curl tclsh tcl-dev libxft-dev libxext-dev libfftw3-3"
+ 21: "apt install -y python3-pip pip3 install --upgrade pip pip3 install emcee==2.2.1 h5py hic hsluv jupyter"
+ 22: "apt install -y matplotlib nbdime numpy pandas pathlib ptemcee pyhepmc pyyaml scikit-learn"
+ 23: "apt install -y scipy seaborn tqdm"
+ 24: "mkdir -p ${ROOTSYS} && mkdir -p ${HOME}/root"
+ 25: "cd ${HOME}/root && git clone --branch v6-26-06 --depth=1 https://github.com/root-project/root.git src"
+ 26: "cd ${HOME}/root/src && mkdir build && cd build"
+ 27: "cmake ../src -DCMAKE_CXX_STANDARD=14 -DCMAKE_INSTALL_PREFIX=${ROOTSYS}"
+ 28: "make -j4 install"
+ 29: "rm -r ${HOME}/root"
+ 30: "curl -SL http://hepmc.web.cern.ch/hepmc/releases/HepMC3-3.2.5.tar.gz | tar -xvzC /usr/local"
+ 31: "cd /usr/local && mkdir hepmc3-build && cd hepmc3-build"
+ 32: "cmake ../HepMC3-3.2.5 -DCMAKE_INSTALL_PREFIX=/usr/local -DHEPMC3_ENABLE_ROOTIO=ON -DROOT_DIR=${ROOTSYS} -DHEPMC3_BUILD_EXAMPLES=ON"
+ 33: "make -j4 install"
+ 34: "rm -r /usr/local/hepmc3-build"
+ 35: "RUN curl -SLk http://pythia.org/download/pythia83/pythia${pythiaV}.tgz | tar -xvzC /usr/local"
+ 36: "cd /usr/local/pythia${pythiaV}"
+ 37: "./configure --enable-shared --prefix=/usr/local/ --with-hepmc3=/usr/local/HepMC3-3.2.5"
+ 38: "make -j4"
+ 39: "make -j4 install"
+ 40: "cd / && git clone --depth 1 --branch v1.3.8.8 https://github.com/matplo/heppy.git"
+ 41: "cd heppy && ./external/fastjet/build.sh"
+ 42: "cd heppy && ./external/hepmc2/build.sh"
+ 43: "cd heppy && ./cpptools/build.sh"
+ 44: "curl -SLk https://sourceforge.net/projects/modules/files/Modules/modules-4.5.1/modules-4.5.1.tar.gz | tar -xvzC /usr/local"
+ 45: "cd /usr/local/modules-4.5.1"
+ 46: "./configure --prefix=/usr/local --modulefilesdir=/heppy/modules"
+ 47: "make -j4"
+ 48: "make -j4 install"
+ 49: "RUN groupadd -g ${id} ${username}"
+ 50: "useradd --create-home --home-dir /home/${username} -u ${id} -g ${username} ${username}"
+Entry command: /bin/bash

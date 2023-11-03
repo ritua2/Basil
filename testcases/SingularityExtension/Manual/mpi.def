@@ -1,0 +1,30 @@
+Bootstrap: library
+From: ubuntu:latest
+
+%post
+    apt-get -y update && \
+    apt-get -y upgrade && \
+    apt-get -y install gcc make file wget g++ libtool build-essential libibverbs-dev
+    apt-get clean
+    OSU_VERSION="7.2"
+    wget -O osu-micro-benchmarks-$OSU_VERSION.tar.gz http://mvapich.cse.ohio-state.edu/download/mvapich/osu-micro-benchmarks-$OSU_VERSION.tar.gz
+    tar -zxvf osu-micro-benchmarks-$OSU_VERSION.tar.gz
+    cd osu-micro-benchmarks-$OSU_VERSION
+    ./configure CC=mpicc CXX=mpicxx
+    make && make install
+
+%labels
+    Name osu-microbenchmarks
+    Version 7.2
+    Author Armaan
+    Description OSU Microbenchmarks
+
+%environment
+    export PATH=/osu-micro-benchmarks-7.2:$PATH
+
+%help
+    This Singularity container provides the OSU Microbenchmarks Suite for the user's ease.
+    You can run OSU benchmarks after launching this container and operating within the container by specifying the file you want to run in the %runscript.
+
+%runscript
+    mpirun -n 2 /opt/osu/libexec/osu-micro-benchmarks-7.2/c/mpi/one-sided/osu_latency

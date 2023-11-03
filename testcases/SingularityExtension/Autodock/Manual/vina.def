@@ -1,0 +1,17 @@
+Bootstrap: docker
+From: ubuntu:kinetic
+
+%files
+    conf.txt /conf.txt
+    ligand.pdbqt /ligand.pdbqt
+    protein.pdbqt /protein.pdbqt
+
+%post
+    apt-get update && \
+    apt-get install -y build-essential libboost-all-dev swig git && \
+    git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina && \
+    cd /autodock-vina/build/linux/release && \
+    make
+
+%runscript
+    /autodock-vina/build/linux/release/vina --config /conf.txt "$@"

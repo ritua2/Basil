@@ -5,20 +5,110 @@ import re
 def input_(prompt):
     return input("\n" + prompt + "  ")
 
-def gather_input(prompt, collection=None):
-    inputs = []
+def create_singularity_file():
+    print("\nWelcome to Singularity file creation. Follow the prompts below to complete your Singularity Definition File, which will be used to build your Singularity Image.\n")
+
+    # Bootstrap options
+    bootstrapOptions = ["docker", "library", "shub", "oras", "scratch"]
+
+    # Labels
+    print("%label")
+    app_name = input("Enter the name of your application: ")
+    app_version = input("Enter the version of your application: ")
+    app_author = input("Enter the author's name: ")
+    app_description = input("Enter a short description of your application: ")
+
+    # Bootstrap selection
+    print("\nAvailable set of options for bootstrap method: ")
+    for index, option in enumerate(bootstrapOptions, start=1):
+        print(f"{index}. {option}")
+
+    bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+
+    while not bootstrap_selection.isdigit() or not 1 <= int(bootstrap_selection) <= len(bootstrapOptions):
+        print("INVALID SELECTION. PLEASE PROVIDE THE INPUT AGAIN.\n")
+        bootstrap_selection = input("Select the bootstrap method by entering the corresponding number: ")
+    bootstrap = bootstrapOptions[int(bootstrap_selection) - 1]
+
+    base_image = input("Enter the base image for your bootstrap: (for example, ubuntu:23.10): ")
+
+    # Files
+    print("\n%files")
+    files = []
     while True:
-        user_input = input(prompt)
-        if not user_input:
+        file = input("Enter the file(s) you'd like to copied to the container or leave empty to finish: ")
+        if not file:
             break
-        if collection and user_input not in collection:
-            print("Invalid input. Please select from the provided options.")
-            continue
-        inputs.append(user_input)
-    return inputs
+        files.append(file)
 
+    # Collect package inputs
+    print("\n%post")
+    packages = []
+    while True:
+        package = input("Enter a package you want to install or leave empty to finish: ")
+        if not package:
+            break
+        packages.append(package)
 
-def create_basil_file(img_type = 'docker'):
+    post_commands = []
+    while True:
+        post_command = input("\nEnter any setup commands or leave empty to finish: ")
+        if not post_command:
+            break
+        post_commands.append(post_command)
+
+    # Collect environment variable inputs
+    print("\n%environment")
+    environments = []
+    while True:
+        environment = input("Enter an environment variable for your application or leave empty to finish: ")
+        if not environment:
+            break
+        environments.append(environment)
+
+    print("\n%help")
+    help_text = input("Enter the instructions on how to run your program: ")
+
+    print("\n%runscript")
+    app_exec = input("Enter the command to execute your application: ")
+
+    # Create the Singularity definition content
+    singularity_def = f"""Bootstrap: {bootstrap}
+From: {base_image}
+
+%post
+    apt-get update
+    apt-get install -y {" ".join(packages)}
+    {"  ".join(post_commands)}
+
+%labels
+    Name {app_name}
+    Version {app_version}
+    Author {app_author}
+    Description {app_description}
+
+%files
+    {os.linesep.join([' ' + file for file in files])}
+
+%environment
+    {os.linesep.join([' ' + environment for environment in environments])}
+
+%help
+    {help_text}
+
+%runscript
+    {app_exec}
+"""
+
+    # Write the definition content to a .def file
+    def_filename = f"{app_name}_{app_version}.def"
+    with open(def_filename, "w") as def_file:
+        def_file.write(singularity_def)
+
+    print(f"Singularity definition file '{def_filename}' has been created successfully!")
+
+def create_docker_file():
+    print("\nWelcome to Dockerfile creation. Follow the prompts below to complete your Dockerfile, which will be used to build your Docker Image.\n")
     images_and_package_manager = [
         ("ubuntu:23.10", "apt"),
         ("ubuntu:kinetic", "apt"),
@@ -53,7 +143,7 @@ def create_basil_file(img_type = 'docker'):
         ("centos:centos6", "yum"),
     ]
 
-    print("Available set of base images for BASIL: ")
+    print("Available set of base images for MIDAS: ")
     for index, image_and_pkg_manager in enumerate(images_and_package_manager, start=1):
         print(f"{index}. {image_and_pkg_manager[0]}")
 
@@ -64,9 +154,7 @@ def create_basil_file(img_type = 'docker'):
         selection = input_(">>> Please select the base image by entering its number: ")
     BASE_IMAGE, PKG_MANAGER = images_and_package_manager[int(selection) - 1]
 
-    WORKDIR = ""
-    if img_type == 'docker':
-        WORKDIR = input_(">>> Enter work directory: [OPTIONAL]")
+    WORKDIR = input_(">>> Enter work directory: [OPTIONAL]")
 
     ENV_VARIABLES = []
     # We will change this later to accept the variable names and values as pairs.
@@ -97,49 +185,47 @@ def create_basil_file(img_type = 'docker'):
             CONTENTS.append((CONTENT_SRC, CONTENT_DEST))
 
     ADVANCED_COPY = []
-    if img_type == 'docker':
-        print(">>> ADVANCED COPY: Enter the names of the files that you want to package in the Docker image. Press ENTER to skip when you don't have anything more to enter ...")
-        note = """
-            Advanced way to copy files to Docker image
-            - Web File Downloads: Download files directly from the web and add them to your Docker images.
-            - Flexible Copy Operations: Copy files and folders based on specific patterns to defined locations within your Docker images.
-            - Simple Decompression: Easily decompress tar files without any manual effort.
-            Examples:
-                1. Web File Download:
-                    https://example.com/sample-file.txt:/path/to/destination/sample-file.txt
-                2. Copy Files using Regex Matches:
-                    myapp-*.js:/app/
-                3. Simplified Decompression of Tar Files:
-                    myapp.tar.gz:/destination/folder/
-        """
-        print(note)
-        while True:
-            CONTENT_SRC = input_(f"[{len(ADVANCED_COPY)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
-            if(CONTENT_SRC==""):
-                print()
-                break
+    print(">>> ADVANCED COPY: Enter the names of the files that you want to package in the Docker image. Press ENTER to skip when you don't have anything more to enter ...")
+    note = """
+        Advanced way to copy files to Docker image
+        - Web File Downloads: Download files directly from the web and add them to your Docker images.
+        - Flexible Copy Operations: Copy files and folders based on specific patterns to defined locations within your Docker images.
+        - Simple Decompression: Easily decompress tar files without any manual effort.
+        Examples:
+            1. Web File Download:
+                https://example.com/sample-file.txt:/path/to/destination/sample-file.txt
+            2. Copy Files using Regex Matches:
+                myapp-*.js:/app/
+            3. Simplified Decompression of Tar Files:
+                myapp.tar.gz:/destination/folder/
+    """
+    print(note)
+    while True:
+        CONTENT_SRC = input_(f"[{len(ADVANCED_COPY)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
+        if(CONTENT_SRC==""):
+            print()
+            break
 
-            CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND): ")
+        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND): ")
 
-            confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
-            if confirmation.lower() != 'n':
-                ADVANCED_COPY.append((CONTENT_SRC, CONTENT_DEST))
+        confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            ADVANCED_COPY.append((CONTENT_SRC, CONTENT_DEST))
 
     VOLUMES = []
-    if img_type == 'docker':
-        print(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
-        note = """
-            Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates.
-        """
-        print(note)
-        while True:
-            VOLUME = input_(f"[{len(VOLUMES)+1}]: ")
-            if(VOLUME==""):
-                print()
-                break
-            confirmation = input_(f"Do you want to add volume '{VOLUME}'? [Y/n]\n")
-            if confirmation.lower() != 'n':
-                VOLUMES.append(VOLUME)
+    print(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
+    note = """
+        Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates.
+    """
+    print(note)
+    while True:
+        VOLUME = input_(f"[{len(VOLUMES)+1}]: ")
+        if(VOLUME==""):
+            print()
+            break
+        confirmation = input_(f"Do you want to add volume '{VOLUME}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            VOLUMES.append(VOLUME)
 
     EXPOSE_PORTS = []
     print(">>> Enter the ports that you want to expose to the host name. Press ENTER to skip when you don't have anything more to enter ...")
@@ -156,17 +242,16 @@ def create_basil_file(img_type = 'docker'):
         if confirmation.lower() != 'n':
             EXPOSE_PORTS.append(PORT)
 
-    # Removing this as it is very confusing.
-    # PACKAGES = []
-    # print(">>> Enter any software packages or dependencies or prerequisites that are required to complete the installation. Press ENTER to skip when you don't have anything more to enter ...")
-    # while True:
-    #     PKG = input_(f"[{len(PACKAGES)+1}]: ")
-    #     if(PKG==""):
-    #         print()
-    #         break
-    #     confirmation = input_(f"Do you want to install '{PKG}'? [Y/n]\n")
-    #     if confirmation.lower() != 'n':
-    #         PACKAGES.append(PKG)
+    PACKAGES = []
+    print(">>> Enter any software packages or dependencies or prerequisites that are required to complete the installation. Press ENTER to skip when you don't have anything more to enter ...")
+    while True:
+        PKG = input_(f"[{len(PACKAGES)+1}]: ")
+        if(PKG==""):
+            print()
+            break
+        confirmation = input_(f"Do you want to install '{PKG}'? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            PACKAGES.append(PKG)
 
     SETUP_CMDS = []
     print(">>> Enter the commands for building the code, including any commands required for running the prerequisite software packages. Press ENTER to skip when you don't have anything more to enter ...")
@@ -179,13 +264,9 @@ def create_basil_file(img_type = 'docker'):
         confirmation = input_(f"Do you want to add command `${CMD}` to setup your project environment? [Y/n]\n")
         if confirmation.lower() != 'n':
             SETUP_CMDS.append(CMD)
+    print(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
     
-    ENTRYPOINT = ""
-    if img_type == 'docker':
-        print(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
-        
-        ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). ")
-    
+    ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). ")
 
     DEFAULT = input_("Enter a 'default command' that should be run everytime your Docker image runs as a container (optional):")
 
@@ -322,6 +403,7 @@ def create_basil_file(img_type = 'docker'):
         with open(license_file_path, 'w') as license_file:
             license_file.write(license_content)
 
+        
         # Construct the regex pattern
         regex = r'{{%\s*(.*?)\s*%}}'
 
@@ -335,9 +417,6 @@ def create_basil_file(img_type = 'docker'):
         CONTENTS.append(("LICENSE.txt", "LICENSE"))
 
     with open('midas.yml','w+') as midas_file:
-
-        midas_file.write(f"Image type: '{img_type}'\n")
-
         # ADDING BASE IMAGE SO THAT THE YAML FILE IS VALID
         midas_file.write(f"Base: \"{BASE_IMAGE}\"\n")
 
@@ -351,7 +430,7 @@ def create_basil_file(img_type = 'docker'):
             midas_file.write("Environment variables:\n")
             for _ in range(len(ENV_VARIABLES)):
                 midas_file.write(f' {NUM}:\n')
-                midas_file.write(f'  {ENV_VARIABLES[_][0]}:{ENV_VARIABLES[_][1]}\n')
+                midas_file.write(f'  {ENV_VARIABLES[_][0]}: {ENV_VARIABLES[_][1]}\n')
                 NUM += 1
 
         if len(CONTENTS) > 0:
@@ -379,9 +458,25 @@ def create_basil_file(img_type = 'docker'):
                 midas_file.write(f' {NUM}: "{EXPOSE_PORTS[_]}"\n')
                 NUM+=1
 
-        if len(SETUP_CMDS)> 0 :
+        if len(PACKAGES) + len(SETUP_CMDS)> 0 :
             midas_file.write("Setup:\n")
+            if PKG_MANAGER == "apt":
+                midas_file.write(f' {NUM}: "apt-get update"\n')
+            elif PKG_MANAGER == "yum":
+                midas_file.write(f' {NUM}: "yum update"\n')
+            elif PKG_MANAGER == "apk":
+                midas_file.write(f' {NUM}: "apk update"\n')
             NUM+=1
+
+            for _ in range(len(PACKAGES)):
+                if PKG_MANAGER == "apt":
+                    midas_file.write(f' {NUM}: "{PKG_MANAGER} install -y {PACKAGES[_]}"\n')
+                elif PKG_MANAGER == "yum":
+                    midas_file.write(f' {NUM}: "{PKG_MANAGER} install -y {PACKAGES[_]}"\n')
+                elif PKG_MANAGER == "apk":
+                    midas_file.write(f' {NUM}: "{PKG_MANAGER} add {PACKAGES[_]}"\n')
+                NUM+=1
+
             for _ in range(len(SETUP_CMDS)):
                 midas_file.write(f' {NUM}: "{SETUP_CMDS[_]}"\n')
                 NUM+=1
@@ -394,7 +489,6 @@ def create_basil_file(img_type = 'docker'):
             midas_file.write("Default command: ")
             midas_file.write(f'{DEFAULT}\n')
 
-
 def main():
     print("\nINTERACTIVE MODE: BASIL\n")
     print("Docker and Singularity are both containerization technologies that allow you to package up an application and its dependencies into a single image that can be run on any machine. This makes it easy to deploy and manage applications, and to ensure that they are always running in the same environment. Docker is a more popular containerization technology than Singularity. It is easier to use, and there are more Docker images available. However, Singularity is designed for high-performance computing (HPC) environments, and it can be more secure than Docker.")
@@ -405,10 +499,10 @@ def main():
     
     if container_type == '1':
         print("\nDOCKER MODE:\n")
-        create_basil_file(img_type='docker')
+        create_docker_file()
     elif container_type == '2':
         print("\nSINGULARITY MODE:")
-        create_basil_file(img_type='singularity')
+        create_singularity_file()
     else:
         print("Invalid selection, please enter 1 for Docker and 2 for Singularity...")
 
