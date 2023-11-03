@@ -49,6 +49,8 @@ if [[ $1 == "-b" ]]; then
                 echo "WARNING: Please do not enter any sensitive information other than your username and token."
                 echo ""
                 read -p "Enter your username: " img_hub_username
+                echo ""
+                read -p "Enter your DockerHub token: " img_hub_token
 
             elif [ "$image_type" == "docker" ]; then
                 echo "Building your Docker Image..."

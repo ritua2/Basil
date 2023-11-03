@@ -174,6 +174,9 @@ def sf_copy(copy_instruction):
     copy_broken = copy_instruction.split(":")
     return ""+copy_broken[0]+" "+copy_broken[1]
 
+def sf_expose(expose_instruction,id=1):
+    return f"Port-{id} "+ str(expose_instruction)
+
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def sf_env(envar_instruction):
@@ -227,6 +230,8 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
     with open(def_file_path, "w") as dfp:
         files_available = False
         envs_available = False
+        expose_ports_available = False
+        ports_counter = 1
         #
         files_to_copy = []
         env_to_copy = []
@@ -248,6 +253,12 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
                     dfp.write("\n%environment\n")
                     envs_available = True
                 dfp.write(spacing + sf_env(an_instruction[1]) + "\n")
+            elif an_instruction[2] == "Expose ports":
+                if not expose_ports_available:
+                    dfp.write("\n%labels\n")
+                    expose_ports_available = True
+                dfp.write(spacing + sf_expose(an_instruction[1], ports_counter) + "\n")
+                ports_counter += 1
         
 
         if default_comm:
