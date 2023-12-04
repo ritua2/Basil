@@ -1,0 +1,65 @@
+Bootstrap: docker
+From: ubuntu:22.04
+
+%post
+apt update 
+export DEBIAN_FRONTEND=noninteractive 
+apt install -y build-essential software-properties-common libssl-dev libffi-dev python3-dev libgdbm-dev libc6-dev libbz2-dev libsqlite3-dev tk-dev libffi-dev zlib1g-dev wget gpg git 
+wget https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz 
+md5sum Python-3.11.4.tgz 
+tar  -xvf Python-3.11.4.tgz 
+cd Python-3.11.4/ 
+sed -i '8998s/.*/    CFLAGS_NODIST="$CFLAGS_NODIST -std=c11 -fPIC"/' configure 
+./configure --enable-optimizations 
+make -j 4 
+make install 
+update-alternatives --install /usr/bin/python3 python3 /usr/local/bin/python3.11 2 
+update-alternatives --config python3 
+python3 --version 
+apt install -y cmake 
+apt install -y gcc g++ gfortran 
+apt install -y python3-pip 
+apt install -y liblapack-dev 
+apt install -y libopenmpi-dev 
+apt install -y libmkl-rt 
+apt install -y libmkl-blacs-openmpi-lp64 
+apt install -y libscalapack-openmpi-dev 
+cd 
+git clone https://github.com/OpenSees/mumps.git 
+cd mumps 
+mkdir build 
+cd build 
+cmake .. -Darith=d 
+cmake --build . --config Release --parallel 4 
+cd ../.. 
+git clone --depth 1 --branch hdf5-1_12_2 https://github.com/HDFGroup/hdf5.git 
+cd hdf5 
+./configure --prefix=/usr/local/hdf5 
+make 
+make install 
+pip3 install conan==1.60.0 
+cd 
+git clone https://github.com/OpenSees/OpenSees.git 
+cd OpenSees
+git checkout 9f9aeb67296d41920fffbb9b90f6863ad3bf486b 
+mkdir build 
+cd build 
+conan install .. --build missing 
+sed -i '/find_package(MPI)/a find_package (Python 3.11 EXACT COMPONENTS Interpreter Development)' ../CMakeLists.txt 
+sed -i 's/# add_compile_options(-fPIC)/add_compile_options(-fPIC)/' ../CMakeLists.txt 
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib:/usr/lib/x86_64-linux-gnu/libmkl_blacs_openmpi_lp64.so 
+export CPLUS_INCLUDE_PATH=/software/r9/intel/oneapi/2023.0.0/mkl/2023.0.0/include 
+cmake .. -DMUMPS_DIR=$PWD/../../mumps/build -DCMAKE_POSITION_INDEPENDENT_CODE=ON -DOPENMPI=TRUE -DSCALAPACK_LIBRARIES="/usr/lib/x86_64-linux-gnu/libmkl_blacs_openmpi_lp64.so;/usr/lib/x86_64-linux-gnu/libscalapack-openmpi.so.2.1" -DPYTHON_LIBRARY=/usr/local/lib/libpython3.11.a -DPYTHON_INCLUDE_DIR=/usr/local/include/python3.11 -DPYTHON_EXECUTABLE=/usr/local/bin/python3.11 
+cmake --build . --config Release --target OpenSees --parallel 4 
+cmake --build . --config Release --target OpenSeesPy 
+which tee 
+wget -O- https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS.PUB  | gpg --dearmor | tee /usr/share/keyrings/oneapi-archive-keyring.gpg > /dev/null 
+echo "deb [signed-by=/usr/share/keyrings/oneapi-archive-keyring.gpg] https://apt.repos.intel.com/oneapi all main" | tee /etc/apt/sources.list.d/oneAPI.list 
+apt update 
+apt upgrade -y 
+apt install -y intel-basekit 
+export MKLROOT=/opt/intel/oneapi/mkl/2023.2.0/ 
+sed -i '$s|$| -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl|' CMakeFiles/OpenSeesMP.dir/link.txt 
+cmake --build . --config Release --target OpenSeesMP 
+sed -i '$s|$| -L${MKLROOT}/lib/intel64 -Wl,--no-as-needed -lmkl_intel_ilp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl|' CMakeFiles/OpenSeesSP.dir/link.txt 
+cmake --build . --config Release --target OpenSeesSP

@@ -1,0 +1,14 @@
+
+Bootstrap: docker
+From: ubuntu:22.04
+
+%files
+conf.txt /conf.txt
+protein.pdbqt /protein.pdbqt
+ligand.pdbqt /ligand.pdbqt
+
+%post 
+apt-get update && apt-get install -y build-essential && apt-get install -y libboost-all-dev swig git && git clone https://github.com/ccsb-scripps/AutoDock-Vina  /autodock-vina && cd autodock-vina/build/linux/release && make 
+
+%runscript
+/autodock-vina/build/linux/release/vina --config /conf.txt
