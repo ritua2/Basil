@@ -66,7 +66,7 @@ if MIDAS_parser.base_check(provided_data)[1]:
     sys.exit("Necessary argument 'Base' is missing from input file")
 
 
-def docker_function():
+def create_image_definition_file():
     docker_instructions = MIDAS_parser.order_inputs(provided_data)
 
     if docker_instructions[1]:
@@ -119,39 +119,7 @@ def docker_function():
     if not args.tag:
         sys.exit()
 
-    # Docker actions
-    client = docker.from_env()
+    
 
-    if type(args.tag) != str:
-        sys.exit("Invalid tag, provide a string")
+create_image_definition_file()
 
-    docker_image_name_pattern = re.compile(r"^[a-zA-Z0-9]([\w.-]+\/)*[\w.-]+$", re.IGNORECASE)
-
-    if not docker_image_name_pattern.match(args.tag):
-        sys.exit("Invalid Tag, docker images must be at most 126 characters long and composed of only alphanumeric, dots, underscores, or dash characters")
-
-    dockerhub_username = args.username
-
-    if not args.username:
-        dockerhub_username = input("Dockerhub username: ")
-
-    # Builds the image
-    dockerhub_tag = dockerhub_username + "/" + args.tag
-    docker_path_dir = os.path.dirname(os.path.abspath(args.output))
-    client.images.build(path=docker_path_dir, dockerfile=args.output, tag=dockerhub_tag, timeout=args.timeout)
-
-    # Logins into docker hub
-    client.login(username=dockerhub_username, password=getpass.getpass("Enter dockerhub password: "))
-
-    if args.push:
-        for line in client.images.push(dockerhub_tag, stream=True, decode=True):
-            print(line)
-
-
-docker_function()
-
-def singularity_function():
-    # to be populated
-    pass
-
-singularity_function()

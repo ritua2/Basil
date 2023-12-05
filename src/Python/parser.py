@@ -38,8 +38,6 @@ def order_inputs(raw_data):
     tags_to_order = provided_instructions(raw_data)
 
     tags_to_order.remove("Base")
-    if "Default command" in tags_to_order:
-        tags_to_order.remove("Default command")
     if "Entry command" in tags_to_order:
         tags_to_order.remove("Entry command")
 
@@ -127,12 +125,8 @@ def df_env(envar_instruction):
     return "ENV "+env_broken[0]+" "+env_broken[1]
 
 # Prints the default command
-def df_cmd(cmd_instruction):
-
-    cmd_space_broken = cmd_instruction.split(" ")
-    cmd_space_broken = ["\""+a+"\"" for a in cmd_space_broken if a != '']
-
-    return "CMD [" + " && ".join(cmd_space_broken) + "]"
+def df_cmd(cmds):
+    return  "CMD  " + " && ".join(cmds)  
 
 def df_ent(ent_instruction):
     ent_space_broken = ent_instruction.split(" ")
@@ -184,11 +178,8 @@ def sf_env(envar_instruction):
     return "export "+ envar_instruction
 
 # Prints the default command
-def sf_cmd(cmd_instruction):    
-    cmd_space_broken = cmd_instruction.split(" ")
-    cleaned_cmds = [cmd for cmd in cmd_space_broken if cmd != '']
-
-    return "%runscript\n    " + "\n".join(cleaned_cmds)
+def sf_cmd(cmd_instruction):
+    return cmd_instruction.strip()
     
 # Given all instructions, it processes them and writes them into a file
 # dockerfile_path (str): path of the created Dockerfile
@@ -200,10 +191,11 @@ def sf_cmd(cmd_instruction):
 def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, default_comm=False, entry_comm=False, spacing="    "):
 
         with open(dockerfile_path, "w") as dfp:
+            default_commands = []
+
             dfp.write(df_base(image_base)+"\n\n")
 
             for an_instruction in ordered_instructions:
-
                 if an_instruction[2] == "Working directory":
                     dfp.write(df_workdir(an_instruction[1])+"\n")
                 elif an_instruction[2] == "Setup":
@@ -218,11 +210,14 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                     dfp.write(df_volume(an_instruction[1])+"\n")
                 elif an_instruction[2] == "Advanced copy":
                     dfp.write(df_acopy(an_instruction[1])+"\n")
-
+                elif an_instruction[2] == "Default command":
+                    default_commands.append(an_instruction[1])
+            
             if entry_comm:
                     dfp.write("\n"+df_ent(entry_comm)+"\n")
             if default_comm:
-                dfp.write("\n"+df_cmd(default_comm)+"\n")
+                    dfp.write("\n"+df_cmd(default_commands) + "\n")
+            
 
 # FOR SINGULARITY
 def write_to_def_file(def_file_path, image_base, ordered_instructions, default_comm=False, entry_comm=False, spacing="    "):
@@ -231,6 +226,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
         files_available = False
         envs_available = False
         expose_ports_available = False
+        default_comm_available = False
         ports_counter = 1
         #
         files_to_copy = []
@@ -259,10 +255,12 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
                     expose_ports_available = True
                 dfp.write(spacing + sf_expose(an_instruction[1], ports_counter) + "\n")
                 ports_counter += 1
+            elif an_instruction[2] == "Default command":
+                if not default_comm_available:
+                    dfp.write("\n%runscript\n")
+                    default_comm_available = True
+                dfp.write(spacing + sf_cmd(an_instruction[1]) + "\n")
         
-
-        if default_comm:
-            dfp.write("\n"+sf_cmd(default_comm)+"\n")
         
 # Given a json/yaml file with the instructions, it creates the dockerfile
 # file_with_data (str): path to the file to be parsed
