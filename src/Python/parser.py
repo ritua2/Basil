@@ -132,7 +132,7 @@ def df_cmd(cmd_instruction):
     cmd_space_broken = cmd_instruction.split(" ")
     cmd_space_broken = ["\""+a+"\"" for a in cmd_space_broken if a != '']
 
-    return "CMD [" + ", ".join(cmd_space_broken) + "]"
+    return "CMD [" + " && ".join(cmd_space_broken) + "]"
 
 def df_ent(ent_instruction):
     ent_space_broken = ent_instruction.split(" ")
@@ -188,7 +188,7 @@ def sf_cmd(cmd_instruction):
     cmd_space_broken = cmd_instruction.split(" ")
     cleaned_cmds = [cmd for cmd in cmd_space_broken if cmd != '']
 
-    return "%runscript\n    " + " ".join(cleaned_cmds)
+    return "%runscript\n    " + "\n".join(cleaned_cmds)
     
 # Given all instructions, it processes them and writes them into a file
 # dockerfile_path (str): path of the created Dockerfile
