@@ -184,10 +184,20 @@ def create_basil_file(img_type = 'docker'):
     if img_type == 'docker':
         print(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
         
-        ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). ")
+        ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). \n")
     
 
-    DEFAULT = input_("Enter a 'default command' that should be run everytime your Docker image runs as a container (optional):")
+    DEFAULT_CMDS = []
+    print(">>> Enter commands that should run every time you run the image. Press ENTER to skip when you don't have anything more to enter ...")
+
+    while True:
+        CMD = input_(f"[{len(DEFAULT_CMDS)+1}]: ")
+        if (CMD == ""):
+            print()
+            break
+        confirmation = input_(f"Do you want to add command `${CMD}` to run when you run the image? [Y/n]\n")
+        if confirmation.lower() != 'n':
+            DEFAULT_CMDS.append(CMD)
 
     # list of valid licenses
     licenses = [
@@ -390,9 +400,11 @@ def create_basil_file(img_type = 'docker'):
             midas_file.write("Entry command: ")
             midas_file.write(f'{ENTRYPOINT}\n')
 
-        if DEFAULT != "":
-            midas_file.write("Default command: ")
-            midas_file.write(f'{DEFAULT}\n')
+        if len(DEFAULT_CMDS) > 0:
+            midas_file.write("Default command: \n")
+            for _ in range(len(DEFAULT_CMDS)):
+                midas_file.write(f' {NUM}: {DEFAULT_CMDS[_]}\n')
+                NUM+=1
 
 
 def main():
