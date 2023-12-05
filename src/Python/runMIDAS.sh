@@ -30,7 +30,7 @@ if [[ $1 == "-b" ]]; then
     if [[ $is_wetty == true ]]; then
 
         # ask if user want to upload to dockerhub
-        read -p "Would you like to upload the image to a registry? (yes/no): " upload_img_hub
+        read -p "Would you like to upload the image to the registry? (yes/no): " upload_img_hub
 
         img_hub_username=""
         img_hub_token=""
@@ -50,7 +50,7 @@ if [[ $1 == "-b" ]]; then
                 echo ""
                 read -p "Enter your username: " img_hub_username
                 echo ""
-                read -p "Enter your DockerHub token: " img_hub_token
+                read -p "Enter your singularity services token: " img_hub_token
 
             elif [ "$image_type" == "docker" ]; then
                 echo "Building your Docker Image..."
