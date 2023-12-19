@@ -1,0 +1,12 @@
+Bootstrap: docker
+From: ubuntu:23.10
+
+%files
+    seq.fasta /seq.fasta
+    query.fasta /query.fasta
+
+%post
+    apt-get update && apt-get install -y wget build-essential ncbi-blast+
+
+%runscript
+    blastp -query /query.fasta -subject /seq.fasta
