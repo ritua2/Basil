@@ -152,7 +152,7 @@ if [[ $1 == "-b" ]]; then
         done
 
 
-        selected_ids_str=$(IFS=,; echo "${selected_ids[*]}")
+        selected_ids_str='['$(IFS=,; echo "${selected_ids[*]}")']'
 
 
         # ask if user want to upload to dockerhub
