@@ -220,7 +220,7 @@ if [[ $1 == "-b" ]]; then
             \"img_hub_token\": \"$img_hub_token\",
             \"publish\": \"$upload_img_hub\",
             \"img_type\": \"$image_type\",
-            \"meta_options\": \"$selected_ids_str\",
+            \"meta_tags\": \"$selected_ids_str\",
         }")
 
 
