@@ -1,7 +1,9 @@
 Bootstrap: docker
-From: ubuntu:latest
+From: ubuntu:23.10
+
 %files
-    in.myinput /mpi/in.myinput
+    in.myinput /in.myinput
+
 %post
     apt-get update &&\
     apt-get install -y openmpi-bin libopenmpi-dev git build-essential cmake &&\
@@ -15,6 +17,5 @@ From: ubuntu:latest
     cd ~ &&\
     rm -rf ~/lammps
 
-
 %runscript
-    mpirun -np 4 /usr/local/bin/lmp -in /mpi/in.myinput
+    mpirun -np 4 --allow-run-as-root /usr/local/bin/lmp -in /in.myinput
