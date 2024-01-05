@@ -1,23 +1,18 @@
-FROM ubuntu:latest
+FROM ubuntu:23.10
 
-# Update package list and install required packages
-RUN apt-get update && \
-    apt-get install -y build-essential \
-                       libboost-all-dev \
-                       git \
-                       wget \
-                       && \
-    rm -rf /var/lib/apt/lists/*
+WORKDIR /
 
-# Clone AutoDock Vina repository
-RUN git clone https://github.com/ccsb-scripps/AutoDock-Vina /autodock-vina
+COPY conf.txt /conf.txt
 
-# Build AutoDock Vina
-RUN cd /autodock-vina/build/linux/release && \
+COPY protein.pdbqt /protein.pdbqt
+
+COPY ligand.pdbqt /ligand.pdbqt
+
+RUN apt-get update &&\
+    apt-get install -y build-essential &&\
+    apt-get install -y libboost-all-dev swig git &&\
+    git clone https://github.com/ccsb-scripps/AutoDock-Vina  /autodock-vina &&\
+    cd autodock-vina/build/linux/release &&\
     make
 
-# Set the working directory
-WORKDIR /autodock-vina/build/linux/release
-
-# Run
-CMD ["vina", "--config", "conf.txt"]
+CMD  /autodock-vina/build/linux/release/vina --config /conf.txt
