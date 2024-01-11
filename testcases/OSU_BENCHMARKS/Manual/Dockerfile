@@ -1,14 +1,18 @@
-FROM ubuntu:latest
+FROM ubuntu:22.04
 
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
-    build-essential \
-    mpich \
-    openssh-server \
-    && rm -rf /var/lib/apt/lists/*
+COPY mpi_hello.c /mpi_hello.c
+COPY osu-micro-benchmarks-7.2.tar.gz /osu-micro-benchmarks-7.2.tar.gz
 
-COPY mpi_hello.c /mpi_app/mpi_hello.c
+RUN apt-get update &&\
+DEBIAN_FRONTEND=noninteractive &&\
+apt-get install -y build-essential mpich openssh-server wget &&\
+rm -rf /var/lib/apt/lists/* &&\
+mpicc /mpi_hello.c -o /mpi_hello &&\
+tar xzf /osu-micro-benchmarks-7.2.tar.gz &&\
+cd osu-micro-benchmarks-7.2 &&\
+./configure CC=mpicc CXX=mpicxx &&\
+make &&\
+make install
 
-RUN mpicc /mpi_app/mpi_hello.c -o /mpi_app/mpi_hello
+CMD ["mpirun", "-n", "2", "/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency", "&&", "mpirun", "-n", "2", "/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_bw", "&&", "mpirun", "-n", "2", "/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_bibw", "&&", "mpirun", "-n", "2", "/osu-micro-benchmarks-7.2/c/mpi/pt2pt/standard/osu_latency_mt", "&&", "mpirun", "-n", "4", "/mpi_hello"] 
 
-CMD mpirun --help && mpiexec -n 4 /mpi_app/mpi_hello

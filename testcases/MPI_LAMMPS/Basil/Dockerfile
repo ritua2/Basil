@@ -1,19 +1,19 @@
-# Use a base image with MPI and necessary tools
 FROM ubuntu:23.10
 
-# Install required packages
-RUN apt-get update && \
-    apt-get install -y openmpi-bin libopenmpi-dev git g++
+WORKDIR /
 
-# Clone LAMMPS repository
-RUN git clone https://github.com/lammps/lammps.git /opt/lammps
+COPY in.myinput /in.myinput
 
-# Set the working directory inside the container
-WORKDIR /opt/lammps
+RUN apt-get update &&\
+    apt-get install -y openmpi-bin libopenmpi-dev git build-essential cmake &&\
+    git clone https://github.com/lammps/lammps.git ~/lammps &&\
+    cd ~/lammps &&\
+    mkdir build &&\
+    cd build &&\
+    cmake ../cmake -D CMAKE_INSTALL_PREFIX=/usr/local -D BUILD_MPI=yes &&\
+    make -j$(nproc) &&\
+    make install &&\
+    cd ~ &&\
+    rm -rf ~/lammps
 
-# Build LAMMPS with MPI support
-RUN make yes-all && \
-    make mpi -j$(nproc)
-
-# Set the default command to run LAMMPS
-CMD ["mpirun", "-np", "4", "lmp_mpi", "-in", "in.myinput"]
+CMD  mpirun -np 4 --allow-run-as-root /usr/local/bin/lmp -in /in.myinput
