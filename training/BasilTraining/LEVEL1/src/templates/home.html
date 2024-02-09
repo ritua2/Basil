@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todo App</title>
+</head>
+<body>
+    <h1>Todo App</h1>
+
+    <!-- Form to add a new todo -->
+    <form id="addTodoForm" method="POST">
+        <input type="text" id="taskInput" name="task" placeholder="Enter task">
+        <button type="submit">Add Todo</button>
+    </form>
+
+    <!-- Container to display todos -->
+    <div id="todosContainer">
+        {% for todo in todos %}
+            <div id="todo-{{ todo.id }}">
+                <input type="checkbox" {% if todo.completed %}checked{% endif %} onchange="updateCompletionStatus({{ todo.id }}, this.checked)">
+                <span>{{ todo.task }}</span>
+                <button onclick="editTodo({{ todo.id }})">Edit</button>
+                <button onclick="deleteTodo({{ todo.id }})">Delete</button>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- JavaScript for handling form submission and AJAX requests -->
+    <script>
+        // Function to add a new todo
+        async function addTodo(event) {
+            event.preventDefault();
+            const taskInput = document.getElementById('taskInput');
+            const task = taskInput.value.trim();
+
+            if (task) {
+                await fetch('/todos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ task })
+                });
+                fetchAndRenderTodos();
+                taskInput.value = '';
+            }
+        }
+
+        // Function to edit a todo
+        async function editTodo(todoId) {
+            const task = prompt('Edit task:');
+            if (task !== null) {
+                await fetch(`/todos/${todoId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ task })
+                });
+                fetchAndRenderTodos();
+            }
+        }
+
+        // Function to delete a todo
+        async function deleteTodo(todoId) {
+            await fetch(`/todos/${todoId}`, {
+                method: 'DELETE'
+            });
+            const todoElement = document.getElementById(`todo-${todoId}`);
+            todoElement.remove();
+        }
+
+        // Function to update completion status of a todo
+        async function updateCompletionStatus(todoId, completed) {
+            await fetch(`/todos/${todoId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ completed })
+            });
+        }
+
+        // Function to fetch todos and render them
+        async function fetchAndRenderTodos() {
+            const response = await fetch('/todos');
+            const todos = await response.json();
+            const todosContainer = document.getElementById('todosContainer');
+
+            // Clear existing todos
+            todosContainer.innerHTML = '';
+
+            // Render todos
+            todos.forEach(todo => {
+                const todoElement = document.createElement('div');
+                todoElement.id = `todo-${todo.id}`;
+                todoElement.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''} onchange="updateCompletionStatus(${todo.id}, this.checked)">
+                    <span>${todo.task}</span>
+                    <button onclick="editTodo(${todo.id})">Edit</button>
+                    <button onclick="deleteTodo(${todo.id})">Delete</button>
+                `;
+                todosContainer.appendChild(todoElement);
+            });
+        }
+
+        // Add event listener to the form for adding todos
+        document.getElementById('addTodoForm').addEventListener('submit', addTodo);
+
+        // Fetch and render todos on page load
+        fetchAndRenderTodos();
+    </script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Processing Web App</title>
+</head>
+<body>
+    <h1>Image Processing Web App</h1>
+
+    <!-- Form to upload an image -->
+    <form id="uploadForm" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload Image</button>
+    </form>
+
+    <!-- List of all images -->
+    <h2>All Images</h2>
+    <ul id="imageList"></ul>
+
+    <!-- Processed Image Display -->
+    <h2>Processed Image</h2>
+    <div id="processedImageContainer"></div>
+
+    <!-- JavaScript for handling form submission and fetching image IDs -->
+    <script>
+        // Function to handle form submission for uploading an image
+        async function uploadImage(event) {
+            event.preventDefault();
+            const formData = new FormData(document.getElementById('uploadForm'));
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            // alert(`Image uploaded!\nImage ID: ${result.image_id}\nProcessed Image ID: ${result.processed_image_id}`);
+
+            // Display processed image
+            const processedImageContainer = document.getElementById('processedImageContainer');
+            processedImageContainer.innerHTML = `<img width="500"  src="data:image/jpeg;base64,${result.processed_image_base64}" alt="Processed Image">`;
+
+            // Fetch and render the list of all images after uploading
+            fetchAndRenderImageList();
+        }
+
+        // Function to fetch and render the list of all images
+        async function fetchAndRenderImageList() {
+            const response = await fetch('/images');
+            const data = await response.json();
+            const imageList = document.getElementById('imageList');
+
+            // Clear existing image list
+            imageList.innerHTML = '';
+
+            // Render image list
+            data.image_ids.forEach(imageId => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `<a href="/image/${imageId}/view" target="_blank">${imageId}</a>`;
+                imageList.appendChild(listItem);
+            });
+        }
+
+        // Add event listener to the form for uploading images
+        document.getElementById('uploadForm').addEventListener('submit', uploadImage);
+        
+        // Fetch and render the list of all images on page load
+        fetchAndRenderImageList();
+    </script>
+</body>
+</html>
