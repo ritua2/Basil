@@ -1,6 +1,6 @@
 # Level 0 - Hello Basil
 
-In this level, you will learn the basics of Basil and use it to containerize a simple application which outputs "Hello Basil" into docker and singularity images.
+In this level, you will learn the basics of Basil and use it to containerize a "Hello Basil" application with Docker or Singularity.
 
 # Contents
 * This directory is structured as follows:
@@ -13,8 +13,8 @@ In this level, you will learn the basics of Basil and use it to containerize a s
     └── hellobasil.py
 ```
 * README.md: This file explains the concepts and a hands-on exercise to practice the concepts.
-* solution: This directory contains setup.sh script to solve this particular level
-* src: This directory contains the source code of the level. Specifically, it contains a Python script named hellobasil.py that outputs "Hello Basil".
+* solution: This directory contains setup.sh script to solve this particular level.
+* src: This directory contains the source code used for this exercise. Specifically, it contains a Python script named hellobasil.py that prints "Hello Basil".
 
 
 
