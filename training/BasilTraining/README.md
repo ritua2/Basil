@@ -5,7 +5,7 @@ This training has been designed to help you understand the basics of Basil and h
 Requirements:
 * You should have a basic understanding of Linux commands.
 * You should have the instructions for building your code.
-* You should have Docker or Singularity installed on your machine for using the Basil tool outside the https://icompute.us web-portal.
+* You should have Docker or Singularity installed on your machine for using the Basil images generated using the Basil (https://icompute.us ) web-portal.
 
 Note: We do not support generating images on top of Mac OS/Windows OS base images. You can run an Ubuntu container on a Mac/Windows system to do the training. To run an Ubuntu container, run the command below after replacing <PATH_TO_BASIL_TRAINING_DIRECTORY> with the path to the basil training directory.
 ```bash
