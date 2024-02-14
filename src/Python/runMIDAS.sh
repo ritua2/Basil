@@ -9,11 +9,11 @@ python3 $script_dir/interactive.py
 
 # CHECK IF ABOVE COMMAND EXITED WITH ERROR CODE
 if [ $? -eq 1 ]; then
-    echo "ERROR: Exiting Basil..."
+    echo "Exiting Basil..."
     exit 1
 fi
 
-echo "Generating Dockerfile..."
+echo "Generating defintion file..."
 
 # Step 1
 python3 $script_dir/MIDAS.py
@@ -264,5 +264,3 @@ fi
 
 
 
-echo ""
-echo "Basil execution completed! Please feel free to leave us a constructive review."

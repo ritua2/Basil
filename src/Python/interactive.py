@@ -1,9 +1,15 @@
 #!/usr/bin/python
 import os
 import re
+import sys
 
 def input_(prompt):
     return input("\n" + prompt + "  ")
+
+def print_(message):
+    print()
+    print("-" * 100)
+    print("\n\n" + message + "\n")
 
 def gather_input(prompt, collection=None):
     inputs = []
@@ -53,7 +59,7 @@ def create_basil_file(img_type = 'docker'):
         ("centos:centos6", "yum"),
     ]
 
-    print("Available set of base images for BASIL: ")
+    print_("Available set of base images for BASIL: ")
     for index, image_and_pkg_manager in enumerate(images_and_package_manager, start=1):
         print(f"{index}. {image_and_pkg_manager[0]}")
 
@@ -70,7 +76,7 @@ def create_basil_file(img_type = 'docker'):
 
     ENV_VARIABLES = []
     # We will change this later to accept the variable names and values as pairs.
-    print(">>> Please enter the environment variables and their values. First enter the environment variable name. Then, you will be prompted for the environment variable value. Press ENTER to skip when you don't have anything more to enter.")
+    print_(">>> Please enter the environment variables and their values. First enter the environment variable name. Then, you will be prompted for the environment variable value. Press ENTER to skip when you don't have anything more to enter.")
     while True:
         ENV_VAR = input_(f"[{len(ENV_VARIABLES)+1}]: VARIABLE NAME: ")
         if (ENV_VAR == ""):
@@ -83,14 +89,14 @@ def create_basil_file(img_type = 'docker'):
             ENV_VARIABLES.append((ENV_VAR,ENV_VAR_VAL))
 
     CONTENTS = []
-    print(">>> Enter the relative filepaths (including the filenames) that you want to package in the Docker image. Please note that the path should we relative to your current working directory or folder, which is likely the folder that you uploaded. Press ENTER to skip when you don't have anything more to enter. ")
+    print_(">>> Enter the relative filepaths (including the filenames) that you want to package in the image. Please note that the path should be relative to your current working directory or folder. Press ENTER to skip when you don't have anything more to enter. ")
     while True:
         CONTENT_SRC = input_(f"[{len(CONTENTS)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
         if(CONTENT_SRC==""):
             print()
             break
 
-        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE DOCKER IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND) ")
+        CONTENT_DEST = input_(f"[{len(CONTENTS)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND) ")
 
         confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
         if confirmation.lower() != 'n':
@@ -98,19 +104,26 @@ def create_basil_file(img_type = 'docker'):
 
     ADVANCED_COPY = []
     if img_type == 'docker':
-        print(">>> ADVANCED COPY: Enter the names of the files that you want to package in the Docker image. Press ENTER to skip when you don't have anything more to enter ...")
+        print_(">>> ADVANCED COPY: Enter the names of the files that you want to package in the image. Press ENTER to skip when you don't have anything more to enter ...")
         note = """
+
             Advanced way to copy files to Docker image
             - Web File Downloads: Download files directly from the web and add them to your Docker images.
             - Flexible Copy Operations: Copy files and folders based on specific patterns to defined locations within your Docker images.
             - Simple Decompression: Easily decompress tar files without any manual effort.
             Examples:
                 1. Web File Download:
-                    https://example.com/sample-file.txt:/path/to/destination/sample-file.txt
-                2. Copy Files using Regex Matches:
-                    myapp-*.js:/app/
+                    source: https://example.com/sample-file.txt
+                    destination: /path/to/destination/sample-file.txt
+
+                2. Copy Files using wildcard characters which are matched using Go's filepath.Match rules. check this link for more details: https://pkg.go.dev/path/filepath#Match
+                    source: myapp-*.js
+                    destination: /app/
+
                 3. Simplified Decompression of Tar Files:
-                    myapp.tar.gz:/destination/folder/
+                    source: myapp.tar.gz
+                    destination: /destination/folder/
+                
         """
         print(note)
         while True:
@@ -127,7 +140,7 @@ def create_basil_file(img_type = 'docker'):
 
     VOLUMES = []
     if img_type == 'docker':
-        print(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
+        print_(">>> Enter the volumes that you want to mount with the docker image. Press ENTER to skip when you don't have anything more to enter ...")
         note = """
             Volumes will persist the data even after your execution of your Docker container. For example if you provide "/data", a data folder will be created in the root directory inside the Docker image and the data will persist in docker volumes even after the container terminates.
         """
@@ -142,9 +155,9 @@ def create_basil_file(img_type = 'docker'):
                 VOLUMES.append(VOLUME)
 
     EXPOSE_PORTS = []
-    print(">>> Enter the ports that you want to expose to the host name. Press ENTER to skip when you don't have anything more to enter ...")
+    print_(">>> Enter the ports that you want to expose to the host name. Press ENTER to skip when you don't have anything more to enter ...")
     note = """
-        For example if you provide "8080", the port 8080 will be exposed to the host machine and you can access the application running inside the Docker container from your host machine.
+        For example if you provide "8080", the port 8080 will be exposed to the host machine and you can access the application running inside the container from your host machine.
     """
     print(note)
     while True:
@@ -169,7 +182,7 @@ def create_basil_file(img_type = 'docker'):
     #         PACKAGES.append(PKG)
 
     SETUP_CMDS = []
-    print(">>> Enter the commands for building the code, including any commands required for running the prerequisite software packages. Press ENTER to skip when you don't have anything more to enter ...")
+    print_(">>> Enter the commands for building the code, including any commands required for running the prerequisite software packages. Press ENTER to skip when you don't have anything more to enter ...")
 
     while True:
         CMD = input_(f"[{len(SETUP_CMDS)+1}]: ")
@@ -182,13 +195,13 @@ def create_basil_file(img_type = 'docker'):
     
     ENTRYPOINT = ""
     if img_type == 'docker':
-        print(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
+        print_(">>>  There is a notion of 'entry command' and a 'default command'. The 'entry command' is optional but if provided it is fixed and cannot be overridden at run-time. This command would be the first command that is run when your Docker image is run as a container. The 'default command' is also optional, but if provided, it is the default command that is run when the container runs, and this command will run after the 'entry command' is run. In case there is no 'entry command' provided, the 'default command' would be the first one to run. It should be noted that unlike the 'entry command', the 'default command', can be overridden at run-time by passing command-line arguments through the 'docker run' command. You can choose to provide an 'entry command' only, or a 'default command' only, or both 'entry command' and 'default command'. One scenario where 'entry command' and 'default command' are used together is when a command has a fixed-part, and a variable part that can change everytime the command is run. In this scenario, the fixed part of the command is added to the 'entry command' and the 'default command' is used as a place-holder or to pass default value to the 'entry command' with the understanding that the 'default command' can be overridden by passing command-line arguments at run-time using the 'docker run' command.")
         
-        ENTRYPOINT = input_("Enter an 'entry command' that should be run everytime your Docker image is run as a container (optional). \n")
+        ENTRYPOINT = input_("Enter an 'entry command' that should be run every time the image is run as a container (optional). \n")
     
 
     DEFAULT_CMDS = []
-    print(">>> Enter commands that should run every time you run the image. Press ENTER to skip when you don't have anything more to enter ...")
+    print_(">>> Enter commands that should run every time you run the image. Press ENTER to skip when you don't have anything more to enter ...")
 
     while True:
         CMD = input_(f"[{len(DEFAULT_CMDS)+1}]: ")
@@ -288,7 +301,7 @@ def create_basil_file(img_type = 'docker'):
     }
 
     # provide list of licenses to choose from. Provide extra option in the last for no license.
-    print(">>> Select a license for your project. Select last option if you don't want to add any license.")
+    print_(">>> Select a license for your project. Select last option if you don't want to add any license.")
     for i, license in enumerate(licenses):
         print(f"[{i}]: {license[0]}")
     else:
@@ -316,7 +329,7 @@ def create_basil_file(img_type = 'docker'):
                 continue
 
         except:
-            print("Please enter a valid license number")
+            print("Please enter a valid license number: ")
             continue
         
     if LICENSE != "":
@@ -425,4 +438,9 @@ def main():
         print("Invalid selection, please enter 1 for Docker and 2 for Singularity...")
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print_("Ctrl+C detected.")
+        sys.exit(1)
+
