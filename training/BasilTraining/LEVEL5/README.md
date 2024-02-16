@@ -1,1 +1,1 @@
-# In this level we will containerize your application using Basil's iSpec form.
+# In this level we can containerize any of your projects using Basil's iSpec form or basil standalone version.

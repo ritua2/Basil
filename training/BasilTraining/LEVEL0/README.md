@@ -1,6 +1,6 @@
 # Level 0 - Hello Basil
 
-In this level, you will learn the basics of using the Basil web-portal and use it to containerize a "Hello Basil" application with Docker or Singularity.
+In this level, you will learn the basics of Basil and use it to containerize a simple application which outputs "Hello Basil" into docker and singularity images.
 
 # Contents
 * This directory is structured as follows:
@@ -13,16 +13,16 @@ In this level, you will learn the basics of using the Basil web-portal and use i
     └── hellobasil.py
 ```
 * README.md: This file explains the concepts and a hands-on exercise to practice the concepts.
-* solution: This directory contains setup.sh script to solve this particular level.
-* src: This directory contains the source code used for this exercise. Specifically, it contains a Python script named hellobasil.py that prints "Hello Basil".
+* solution: This directory contains setup.sh script to solve this particular level
+* src: This directory contains the source code of the level. Specifically, it contains a Python script named hellobasil.py that outputs "Hello Basil".
 
 
 
 # Steps
 ### Create a setup script
-The goal of this step is to create a setup script that will install all the necessary software and dependencies to run the "Hello Basil" application.
-* Create a setup script that will install all the necessary software and dependencies to run the python script without any human intervention. 
-* Once done, you can test by running the script to install the software and dependencies, and run the application. If you are unable to complete this step, you can use the setup.sh script provided in the solution directory.
+The goal of this step is to create setup script that will install all the necessary software and dependencies to run the application.
+* Create a setup script that will install all the necessary software and dependencies to run the python script with out any human intervention. 
+* Once done, you can test by running the script to install the software and dependencies and run the application. If you are unable to complete this step, you can use the setup.sh script provided in the solution directory.
 
 ### Containerize the application using Basil's iSpec form
 The goal of this step is to containerize the application using Basil's iSpec form.
@@ -38,9 +38,9 @@ The goal of this step is to containerize the application using Basil's iSpec for
 * Select the meta tags.
     * Select "training" in the meta tags.
 * Select the image type.
-    * We will repeat the containerization process twice to generate both Docker and Singularity images. Therefore, you can select either "Docker" or "Singulariy" as the image type.
+    * We will repeat the containerization process twice to containerize the application into both docker and singularity images. So, you can select either "Docker" or "Singulariy" as the image type.
 * Select the base image.
-    * Select the base image as Ubuntu if you are working on Ubuntu/Debian platform. Else, select the appropriate base image.
+    * Select the base image as ubuntu if you are working on ubuntu/debian platform. Else, select the appropriate base image.
 * Working Directory
     * Let's keep the working directory as it is. We will discuss about it in the next levels.
 * Environment Variables
@@ -69,7 +69,7 @@ The goal of this step is to containerize the application using Basil's iSpec for
     * You can skip this section.
 * Click on "Submit" button to submit the containerization job.
 * You will receive an email once the job is completed.
-* Once the job is completed, you can download the Docker or Singularity images from the email you received from iCompute.
+* Once the job is completed, you can download the docker and singularity images from the email you received from iCompute.
 
 ### Run the containerized application
 The goal of this step is to run the containerized application and verify that it works as expected.
