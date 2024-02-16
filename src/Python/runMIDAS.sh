@@ -202,27 +202,36 @@ if [[ $1 == "-b" ]]; then
         fi
 
         # echo "Uploading the project to build server..."
-        output=$(curl --location "http://$GS:5000/api/instance/sync_files" \
-        --header "Content-Type: application/json" \
-        --data "{
-            \"key\": \"$orchestra_key\",
-            \"username\": \"$USER\"
-        }")
+        response=$(curl --location --write-out "%{http_code}" --silent --output /dev/null "http://$GS:5000/api/instance/sync_files" \
+                --header "Content-Type: application/json" \
+                --data "{
+                    \"key\": \"$orchestra_key\",
+                    \"username\": \"$USER\"
+                }")
+
+        if [ "$response" -ne 200 ]; then
+            echo "Error: Failed to sync files with build server (HTTP status code: $response)"
+            exit 1
+        fi
 
         dirname=$(basename "$PWD")
 
-        output=$(curl --location "http://$GS:5000/api/greyfish/users/$USER/run_midas" \
-        --header "Content-Type: application/json" \
-        --data "{
-            \"key\": \"$orchestra_key\",
-            \"project_dir\": \"home/gib$PWD\",
-            \"img_hub_uid\": \"$img_hub_username\",
-            \"img_hub_token\": \"$img_hub_token\",
-            \"publish\": \"$upload_img_hub\",
-            \"img_type\": \"$image_type\",
-            \"meta_tags\": \"$selected_ids_str\",
-        }")
+        response=$(curl --location --write-out "%{http_code}" --silent --output /dev/null "http://$GS:5000/api/greyfish/users/$USER/run_midas" \
+                --header "Content-Type: application/json" \
+                --data "{
+                    \"key\": \"$orchestra_key\",
+                    \"project_dir\": \"home/gib$PWD\",
+                    \"img_hub_uid\": \"$img_hub_username\",
+                    \"img_hub_token\": \"$img_hub_token\",
+                    \"publish\": \"$upload_img_hub\",
+                    \"img_type\": \"$image_type\",
+                    \"meta_tags\": \"$selected_ids_str\"
+                }")
 
+        if [ "$response" -ne 200 ]; then
+            echo "Error: Failed to submit build job (HTTP status code: $response)"
+            exit 1
+        fi
 
         echo "Build job is submitted. Please check your email for the results."
         echo ""
