@@ -1,6 +1,6 @@
 Welcome to the Basil training. 
 
-This training has been designed to explain the basics of Basil and how to use it in a stand-alone environment to generate Docker and Singularity images. The training is divided into 5 levels with increasing level of complexity. Each module has a README file that explains the concepts and a hands-on exercise to practice the concepts. The training is designed to be self-paced and one can take as much time as you need to complete the training. 
+This training has been designed to explain the basics of Basil and how to use it in a stand-alone environment and also on the icompute.us web-portal to generate Docker and Singularity images. The training is divided into 5 levels with increasing level of complexity. Each module has a README file that explains the concepts and a hands-on exercise to practice the concepts. The training is designed to be self-paced and one can take as much time as you need to complete the training. 
 
 Requirements:
 * You should have a basic understanding of Linux commands.
