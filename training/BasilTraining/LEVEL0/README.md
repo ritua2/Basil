@@ -1,6 +1,6 @@
 # Level 0 - Hello Basil
 
-In this level, you will learn the basics of Basil and use it to containerize a simple application which prints "Hello Basil" in Docker and Singularity containers.
+In this level, you will learn the basics of Basil and use it to containerize a simple application (Python code) which prints "Hello Basil" in Docker and Singularity containers.
 
 # Contents
 * This directory is structured as follows:
