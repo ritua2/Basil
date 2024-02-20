@@ -1,6 +1,6 @@
 # Level 2 - Image Processing App
 
-In this level, you will learn the basics of Basil and use it to containerize a simple image processing application with Docker and Singularity images. 
+In this level, you will learn the basics of Basil and use it to containerize a simple image processing application with Docker and Singularity. 
 
 # Contents
 * This directory is structured as follows:
