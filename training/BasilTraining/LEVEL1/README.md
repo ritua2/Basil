@@ -1,6 +1,6 @@
 # Level 1 - Todo App
 
-In this level, you will learn the basics of Basil and use it to containerize a simple web-application (a ToDo-list app) with Docker and Singularity.
+In this level, you will learn the basics of Basil and use it to containerize a simple web-application (a ToDo-list app written in Python) with Docker and Singularity.
 
 # Contents
 * This directory is structured as follows:
