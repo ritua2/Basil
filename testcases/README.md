@@ -55,10 +55,10 @@ This folder contains some of the test cases that will be used for testing Basil'
     docker pull basilproject/basil_sanjeethboddigm_1709312775:latest
     docker run --rm --name autodockvina -it basilproject/basil_sanjeethboddigm_1709312775:latest
     ```
-* singularity: 
+* singularity: library://sanjeethboddi/manual/basil-1709318629:1.0.0 
     ```
-    singularity pull 
-    singularity run --fakeroot --no-home -e --writable 
+    singularity pull library://sanjeethboddi/manual/basil-1709318629:1.0.0 
+    singularity run --fakeroot --no-home -e --writable library://sanjeethboddi/manual/basil-1709318629:1.0.0
     ```
 
 ### OSU Micro-Benchmarks Image URI:
@@ -81,8 +81,8 @@ This folder contains some of the test cases that will be used for testing Basil'
     ```
 * singularity: 
     ```
-    singularity pull
-    singularity run --fakeroot --no-home -e --writable
+    singularity pull library://sanjeethboddi/manual/basil-1709319652:1.0.0
+    singularity run --fakeroot --no-home -e --writable library://sanjeethboddi/manual/basil-1709319652:1.0.0
     ```
 
 
@@ -134,3 +134,14 @@ This folder contains some of the test cases that will be used for testing Basil'
         singularity run --fakeroot --no-home -e  --writable --env smile=CCCC basil-1709248912_1.0.0.sif
     ```
 
+### BiasNet Image URI:
+* docker: basilproject/basil_sanjeethboddigm_1712843728:latest
+    ```
+    docker pull basilproject/basil_sanjeethboddigm_1712843728:latest
+    docker run --rm --name basil_sanjeethboddigm_1712843728 --env smile=CCCC basilproject/basil_sanjeethboddigm_1712843728:latest
+    ```
+* singularity: library://sanjeethalt/biasnet/basil-1712846389:1.0.0
+    ```
+        singularity pull library://sanjeethalt/biasnet/basil-1712846389:1.0.0
+        singularity run --fakeroot --no-home -e  --writable --env smile=CCCC basil-1712846389_1.0.0.sif
+    ```
