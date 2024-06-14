@@ -145,3 +145,57 @@ This folder contains some of the test cases that will be used for testing Basil'
         singularity pull library://sanjeethalt/biasnet/basil-1712846389:1.0.0
         singularity run --fakeroot --no-home -e  --writable --env smile=CCCC basil-1712846389_1.0.0.sif
     ```
+
+### Sumo Image URI:
+* docker: basilproject/basil_hr1335wa_1718398088:latest
+    ```
+    docker pull basilproject/basil_hr1335wa_1718398088:latest
+
+    # disable xhost acl
+    xhost +
+
+    # run net edit
+    docker run -it --rm \
+        -e DISPLAY -u `id -u` \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v /etc/localtime:/etc/localtime:ro \
+        --name sumo \
+        basilproject/basil_hr1335wa_1718398088:latest sumo/bin/netedit
+    
+    # run sumo gui
+    docker run -it --rm \
+        -e DISPLAY -u `id -u` \
+        -v /tmp/.X11-unix:/tmp/.X11-unix \
+        -v /etc/localtime:/etc/localtime:ro \
+        --name sumo \
+        basilproject/basil_hr1335wa_1718398088:latest sumo/bin/sumo-gui
+        
+    # enable back xhost acl
+    xhost -
+    ```
+* singularity: library://baseswe99/sumo/basil-1718400424:1.0.0
+    ```
+    singularity pull library://baseswe99/sumo/basil-1718400424:1.0.0
+
+    # disable xhost acl
+    xhost +
+
+    # run net edit
+    singularity exec --no-home \
+                 --env DISPLAY=$DISPLAY \
+                 -B /tmp/.X11-unix:/tmp/.X11-unix \
+                 basil-1718400424_1.0.0.sif sumo/bin/netedit
+    
+    # run sumo gui
+    singularity exec --no-home \
+                 --env DISPLAY=$DISPLAY \
+                 -B /tmp/.X11-unix:/tmp/.X11-unix \
+                 basil-1718400424_1.0.0.sif sumo/bin/netedit
+        
+    # enable back xhost acl
+    xhost -
+    ```
+
+
+
+    
