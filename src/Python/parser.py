@@ -158,7 +158,7 @@ def df_acopy(acopy_instruction):
 
 # base image
 def sf_base(basename, alias="base", bootstrap="docker"):
-    return "\nBootstrap: "+bootstrap + "\n" + "From: "+basename + "\n" + f"Stage: {alias}
+    return "\nBootstrap: "+bootstrap + "\n" + "From: "+basename + "\n" + f"Stage: {alias}\n"
 
 # Run commands
 # run_comm (arr) (str): Contains several commands to provision the container
