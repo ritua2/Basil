@@ -158,7 +158,7 @@ def df_acopy(acopy_instruction):
 
 # base image
 def sf_base(basename, alias="base"):
-    return "From: "+basename + "\n" + f"Stage: {alias}"
+    return "\nFrom: "+basename + "\n" + f"Stage: {alias}"
 
 # Run commands
 # run_comm (arr) (str): Contains several commands to provision the container
