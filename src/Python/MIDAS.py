@@ -5,7 +5,6 @@ Main MIDAS standalone program
 """
 
 import argparse
-import docker
 import getpass
 import os
 import re
@@ -88,6 +87,8 @@ def create_image_definition_file():
         "Volumes": "VOLUME",
         "Expose ports": "EXPOSE",
         "Advanced copy": "ADD",
+        "Setup2": "RUN",
+        "Copy From Base": "COPY"
     }
 
     midas_translator = {v: k for k, v in docker_translator.items()}

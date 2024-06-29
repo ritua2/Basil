@@ -11,7 +11,7 @@ def parse_commands(filepath):
 # Requires the data in dictionary form
 def provided_instructions(raw_data):
 
-    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environment variables", "Default command", "Entry command", "Expose ports", "Volumes", "Advanced copy"]
+    valid_tags = ["Base", "Working directory", "Setup", "Contents", "Environment variables", "Default command", "Entry command", "Expose ports", "Volumes", "Advanced copy", "New Image","Setup2", "Copy From Base", ]
 
     return [key for key in raw_data if key in valid_tags]
 
@@ -44,7 +44,6 @@ def order_inputs(raw_data):
     all_tags = []
 
     for atype in tags_to_order:
-
         for numbered_order, instruction in raw_data[atype].items():
             all_tags.append([int(numbered_order), instruction, atype])
 
@@ -70,7 +69,7 @@ def commands_combiner(already_sorted_instructions, spacing="    "):
         if an_instruction[2] == "Already completed":
             continue
 
-        if an_instruction[2] != "Setup":
+        if an_instruction[2] != "Setup" and an_instruction[2] != "Setup2":
             processed_commands.append(an_instruction)
             continue
 
@@ -97,8 +96,8 @@ def commands_combiner(already_sorted_instructions, spacing="    "):
 ###############################################
 
 # base image
-def df_base(basename):
-    return "FROM "+basename
+def df_base(basename, alias="base"):
+    return "FROM "+basename+ f" AS {alias}"
 
 # Working directory
 def df_workdir(workdir):
@@ -111,12 +110,18 @@ def df_run(run_comm, spacing="    "):
 
 # Copies a file
 # If the path is not specified, it is assumed to be in the current working directory of the container
-def df_copy(copy_instruction):
+def df_copy(copy_instruction, from_base=None):
     copy_broken = copy_instruction.split(":")
     if len(copy_broken) == 1:
-        return "\nCOPY "+copy_broken[0]+" ."
+        if from_base is not None:
+            return f"\nCOPY --from={from_base}"+copy_broken[0]+" ."
+        else:
+            return "\nCOPY "+copy_broken[0]+" ."
     else:
-        return "\nCOPY "+copy_broken[0]+" "+copy_broken[1]
+        if from_base is not None:
+            return f"\nCOPY --from={from_base} "+copy_broken[0]+" "+copy_broken[1]
+        else:
+            return "\nCOPY "+copy_broken[0]+" "+copy_broken[1]
 
 # Adds an environmental variable
 # If the path is not specified, it is assumed to be in the current working directory of the container
@@ -152,8 +157,8 @@ def df_acopy(acopy_instruction):
 # bootstrap
 
 # base image
-def sf_base(basename):
-    return "From: "+basename
+def sf_base(basename, alias="base"):
+    return "From: "+basename + "\n" + f"Stage: {alias}"
 
 # Run commands
 # run_comm (arr) (str): Contains several commands to provision the container
@@ -163,8 +168,6 @@ def sf_run(run_comm, spacing="    "):
 # Copies a file
 # If the path is not specified, it is assumed to be in the current working directory of the container
 def sf_copy(copy_instruction):
-    #return "%files\n"+spacing+(copy_instruction)
-    #return copy_instruction
     copy_broken = copy_instruction.split(":")
     return ""+copy_broken[0]+" "+copy_broken[1]
 
@@ -199,6 +202,7 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                 if an_instruction[2] == "Working directory":
                     dfp.write(df_workdir(an_instruction[1])+"\n")
                 elif an_instruction[2] == "Setup":
+                    print(an_instruction[1])
                     dfp.write(df_run(an_instruction[1], spacing)+"\n")
                 elif an_instruction[2] == "Contents":
                     dfp.write(df_copy(an_instruction[1])+"\n")
@@ -210,8 +214,16 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                     dfp.write(df_volume(an_instruction[1])+"\n")
                 elif an_instruction[2] == "Advanced copy":
                     dfp.write(df_acopy(an_instruction[1])+"\n")
+                elif an_instruction[2] == "New Image":
+                    dfp.write(df_base(an_instruction[1], alias="standalone")+"\n")
+                elif an_instruction[2] == "Copy From Base":
+                    dfp.write(df_copy(an_instruction[1], from_base="standalone")+"\n")
+                elif an_instruction[2] == "Setup2":
+                    print(an_instruction[1])
+                    dfp.write(df_run(an_instruction[1], spacing)+"\n")
                 elif an_instruction[2] == "Default command":
                     default_commands.append(an_instruction[1])
+                
             
             if entry_comm:
                     dfp.write("\n"+df_ent(entry_comm)+"\n")
@@ -224,6 +236,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
 
     with open(def_file_path, "w") as dfp:
         files_available = False
+        files_available_in_base = False
         envs_available = False
         expose_ports_available = False
         default_comm_available = False
@@ -255,6 +268,15 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
                     expose_ports_available = True
                 dfp.write(spacing + sf_expose(an_instruction[1], ports_counter) + "\n")
                 ports_counter += 1
+            elif an_instruction[2] == "New Image":
+                dfp.write(spacing + sf_base(an_instruction[1], alias="standalone") + "\n")
+            elif an_instruction[2] == "Copy From Base":
+                if not files_available_in_base:
+                    dfp.write("\n%files from standalone\n")
+                    files_available_in_base = True
+                dfp.write(spacing + sf_copy(an_instruction[1]) + "\n")
+            elif an_instruction[2] == "Setup New Image":
+                dfp.write(spacing + sf_run(an_instruction[1]) + "\n")
             elif an_instruction[2] == "Default command":
                 if not default_comm_available:
                     dfp.write("\n%runscript\n")
