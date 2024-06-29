@@ -157,8 +157,8 @@ def df_acopy(acopy_instruction):
 # bootstrap
 
 # base image
-def sf_base(basename, alias="base"):
-    return "\nFrom: "+basename + "\n" + f"Stage: {alias}"
+def sf_base(basename, alias="base", bootstrap="docker"):
+    return "\nBootstrap: "+bootstrap + "\n" + "From: "+basename + "\n" + f"Stage: {alias}
 
 # Run commands
 # run_comm (arr) (str): Contains several commands to provision the container
@@ -245,7 +245,6 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
         files_to_copy = []
         env_to_copy = []
         #
-        dfp.write("Bootstrap: docker\n")
         dfp.write(sf_base(image_base)+"\n")
 
         for an_instruction in ordered_instructions:
