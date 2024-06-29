@@ -168,7 +168,7 @@ def create_basil_file(img_type = 'docker'):
         confirmation = input_(f"Do you want to expose port '{PORT}'? [Y/n]\n")
         if confirmation.lower() != 'n':
             EXPOSE_PORTS.append(PORT)
-
+        
     # Removing this as it is very confusing.
     # PACKAGES = []
     # print(">>> Enter any software packages or dependencies or prerequisites that are required to complete the installation. Press ENTER to skip when you don't have anything more to enter ...")
@@ -192,6 +192,61 @@ def create_basil_file(img_type = 'docker'):
         confirmation = input_(f"Do you want to add command `${CMD}` to setup your project environment? [Y/n]\n")
         if confirmation.lower() != 'n':
             SETUP_CMDS.append(CMD)
+    
+
+    selection = input_(">>> Do you want to optimize the image size and reduce the file size? [Y/n]: ")
+
+    if selection.lower() != 'n':
+        OPTIMIZATION = True
+    else:
+        OPTIMIZATION = False
+    
+    if OPTIMIZATION:
+        images_and_package_manager = [
+            ("alpine:latest", "apk"),
+        ]
+        print_("Available set of lite images: ")
+        for index, image_and_pkg_manager in enumerate(images_and_package_manager, start=0):
+            print(f"{index}. {image_and_pkg_manager[0]}")
+
+        print_(">>> Select the lite image from the above list: ")
+        LITE_IMAGE_IDX = input_(f"Lite image: ")
+
+        print_(f"Lite image selected: {images_and_package_manager[int(LITE_IMAGE_IDX) - 1][0]}")
+        LITE_IMAGE = images_and_package_manager[int(LITE_IMAGE_IDX) - 1][0]
+
+
+        SETUP_CMDS_2 = []
+        print_(">>> Enter the commands to setup the lite image you selected. Press ENTER to skip when you don't have anything more to enter ...")
+
+        while True:
+            CMD = input_(f"[{len(SETUP_CMDS_2)+1}]: ")
+            if (CMD == ""):
+                print()
+                break
+            confirmation = input_(f"Do you want to add command `${CMD}` to setup your project environment? [Y/n]\n")
+            if confirmation.lower() != 'n':
+                SETUP_CMDS_2.append(CMD)
+        
+        
+        
+        COPY_FROM_BASE = []
+        print_(">>> Enter the relative filepaths (including the filenames) that you want to package in the image. Please note that the path should be relative to your current working directory or folder. Press ENTER to skip when you don't have anything more to enter. ")
+        while True:
+            CONTENT_SRC = input_(f"[{len(COPY_FROM_BASE)+1}]: ENTER RELATIVE FILE PATH (THIS IS THE 'SOURCE' FOR THE COPY COMMAND): ")
+            if(CONTENT_SRC==""):
+                print()
+                break
+
+            CONTENT_DEST = input_(f"[{len(COPY_FROM_BASE)+1}]: ENTER ABSOLUTE FILE PATH THAT SHOULD BE CREATED INSIDE THE IMAGE (THIS IS THE 'DESTINATION' FOR THE COPY COMMAND) ")
+
+            confirmation = input_(f"Do you want to add '{CONTENT_SRC}' to '{CONTENT_DEST}'? [Y/n]\n")
+            if confirmation.lower() != 'n':
+                COPY_FROM_BASE.append((CONTENT_SRC, CONTENT_DEST))
+
+    else:
+        LITE_IMAGE = None
+
     
     ENTRYPOINT = ""
     if img_type == 'docker':
@@ -408,6 +463,27 @@ def create_basil_file(img_type = 'docker'):
             for _ in range(len(SETUP_CMDS)):
                 midas_file.write(f' {NUM}: "{SETUP_CMDS[_]}"\n')
                 NUM+=1
+
+        if OPTIMIZATION:
+            if LITE_IMAGE:
+                midas_file.write(f"New Image:\n")
+                midas_file.write(f' {NUM}: "{LITE_IMAGE}"\n')
+                NUM += 1
+
+            
+            if len(SETUP_CMDS_2)>0:
+                midas_file.write("Setup2:\n")
+                NUM+=1
+                for _ in range(len(SETUP_CMDS_2)):
+                    midas_file.write(f' {NUM}: "{SETUP_CMDS_2[_]}"\n')
+                    NUM+=1
+
+            if len(COPY_FROM_BASE)>0:
+                midas_file.write("Copy From Base:\n")
+                NUM+=1
+                for _ in range(len(COPY_FROM_BASE)):
+                    midas_file.write(f' {NUM}: "{COPY_FROM_BASE[_][0]}:{COPY_FROM_BASE[_][1]}"\n')
+                    NUM+=1
 
         if ENTRYPOINT != "":
             midas_file.write("Entry command: ")

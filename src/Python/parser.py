@@ -217,7 +217,7 @@ def write_to_dockerfile(dockerfile_path, image_base, ordered_instructions, defau
                 elif an_instruction[2] == "New Image":
                     dfp.write(df_base(an_instruction[1], alias="standalone")+"\n")
                 elif an_instruction[2] == "Copy From Base":
-                    dfp.write(df_copy(an_instruction[1], from_base="standalone")+"\n")
+                    dfp.write(df_copy(an_instruction[1], from_base="base")+"\n")
                 elif an_instruction[2] == "Setup2":
                     print(an_instruction[1])
                     dfp.write(df_run(an_instruction[1], spacing)+"\n")
@@ -272,7 +272,7 @@ def write_to_def_file(def_file_path, image_base, ordered_instructions, default_c
                 dfp.write(spacing + sf_base(an_instruction[1], alias="standalone") + "\n")
             elif an_instruction[2] == "Copy From Base":
                 if not files_available_in_base:
-                    dfp.write("\n%files from standalone\n")
+                    dfp.write("\n%files from base\n")
                     files_available_in_base = True
                 dfp.write(spacing + sf_copy(an_instruction[1]) + "\n")
             elif an_instruction[2] == "Setup New Image":
