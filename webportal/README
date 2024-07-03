@@ -1,1 +1,4 @@
-This folder is for adapted GIB for Basil.
+The web-portal related code for Basil is an adapted version of GIB (Gateway-In-a-Box) and is currently in a provate repo. Here is the link to the general, publicly accessible GIB repo:
+
+https://github.com/ritua2/gib_express
+
